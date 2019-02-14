@@ -1,72 +1,18 @@
-# Blog: MY-PROJECT-TITLE
+# Blog: Hopeful - A First Programming Language
 
-**MY-NAME**
+**Gillian Mullen**
 
 ## My First Blog Entry
 
-This is my first blog entry.
-
-The blog is written in [markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet).
-Markdown is a simple text-based mark-up language.
+05/02/19
+Delay in beginning project as the ethics of surveying DCU students and staff. The solution was fill in an Ethics form, and to completely anonymise the data and collect no personal data from the participants.
+Surveys have been drafted and proofread. Ethics form, Plain Language Statement, and Informed Consent Form has been completed and submitted.
+Next step is to distribute surveys to the different demographics: beginning programmers, Engineering students, advanced programmers, and School of Computing staff. Once the surveys have been collected, they must be analysed.
+Before the next meeting, I will complete the analysis. In the mean time, I will practice a run-through of the project with a very simple language, as to ensure that I completely understand what needs to be done.
 
 ## My Second Blog Entry
 
-This week, I learned how to include
-[images](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#images)
-in my blog.
-
-![cat](https://gitlab.computing.dcu.ie/sblott/2018-ca400-XXXX/raw/master/docs/blog/images/cat.jpg)
-
-Here are the instructions:
-
-- Add the image to your repo (probably using the `images` sub-directory here).
-  The cat example above is in `./images/cat.jpg`.
-
-- Commit that and push it to your repo.
-
-- On Gitlab, navigate to your new image and click *Raw*.  You get the raw URL of your image.  Copy that URL.
-
-- Add your image to this document using the following format:
-
-    <pre>![alternative text](URL)</pre>
-
-See the example [here](https://gitlab.computing.dcu.ie/sblott/2018-ca400-XXXX/raw/master/docs/blog/blog.md).
-
-You can also mention other users (like me: @sblott).
-
-## Including Code
-
-Raw text:
-```
-Mary had a little lamb,
-it's fleece was white as snow.
-```
-
-Syntax highlighting is also possible; for example...
-
-Python:
-```python
-i = 0
-while i < len(s):
-   # So something.
-   i = i + 1
-```
-
-Java:
-```java
-for (i=0; i<s.length(); i+=1) {
-   // Do something.
-}
-```
-
-Coffeescript:
-```coffeescript
-i = 0
-while i < s.length
-   # So something.
-   i = i + 1
-```
-
-## Instructions
-
-Once you've understood this sample, replace it with your own blog.
+12/02/19
+Surveys have been collected, and the analysis on them completed.
+Finer details of the language need to be decided. For example, will parameters be passed by value or reference, and will I include both arrays and lists in my language? 
+The next step is to write up a complete analysis of the data, and create a language definition. In order to help create a language definition, I will sketch out what my language should look like. Then, I will break my language down into sub languages. I am doing this as to not overwhelm myself with too much complex work at once.
