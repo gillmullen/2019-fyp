@@ -14,5 +14,12 @@ Before the next meeting, I will complete the analysis. In the mean time, I will 
 
 12/02/19
 Surveys have been collected, and the analysis on them completed.
-Finer details of the language need to be decided. For example, will parameters be passed by value or reference, and will I include both arrays and lists in my language? 
+Finer details of the language need to be decided. For example, will parameters be passed by value or reference, and will I include both arrays and lists in my language?
 The next step is to write up a complete analysis of the data, and create a language definition. In order to help create a language definition, I will sketch out what my language should look like. Then, I will break my language down into sub languages. I am doing this as to not overwhelm myself with too much complex work at once.
+
+## My Third Blog Entry
+
+20/02/19
+Due to a brief illness, the analysis was not finished. The language definition is complete, with the exception of arrays. I have decided to only include arrays in my language, as I believe including both arrays and lists could be confusing to the student. I have also decided to use pass-by-value, as I believe it will be easier to understand for the students. I successfully broke my language down into a series of sub-languages which I will be working on for the next few weeks.
+My goal for the next week is to complete the first three sub-languages and complete my analysis.
+In terms of testing, I will write test for each sub-language. However, each language will also use the tests of the previous languages. For example, the second sub-language will use the second set of tests as well as the first.
