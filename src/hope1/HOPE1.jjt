@@ -1,0 +1,161 @@
+/* Section 1: Options */
+options {
+   MULTI = true;
+   VISITOR = true;
+   JAVA_UNICODE_ESCAPE = true;
+}
+
+/* Section 2: Driver */
+PARSER_BEGIN(HOPE1)
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
+public class HOPE1 {
+
+   public static void main(String args[]) {
+
+      HOPE1 parser = null;
+      String irFileName = "HOPE1.ll";
+
+      if(args.length == 0) {
+         System.out.println("Reading input...");
+         parser = new HOPE1(System.in);
+      }
+      else if(args.length == 1) {
+         try {
+            parser = new HOPE1(new FileInputStream(args[0]));
+            irFileName = args[0] + ".ll";
+         }
+         catch(FileNotFoundException e) {
+            System.err.println("File " + args[0] + " not found");
+            return;
+         }
+      }
+      else {
+         System.out.println("You must use the following format:");
+         System.out.println("java HOPE1 inputfile");
+      }
+
+      try{
+         SimpleNode root = parser.program();
+
+         System.out.println("Abstract Syntax Tree:");
+         root.dump(">");
+         System.out.println();
+
+         System.out.println("Program:");
+         PrintVisitor pv = new PrintVisitor();
+         root.jjtAccept(pv, "");
+         System.out.println("\n");
+
+         System.out.println("Writing LLVM code to: " + irFileName);
+
+         try {
+            BufferedWriter buffer = new BufferedWriter(new FileWriter(irFileName));
+            IrCodeVisitor irCode = new IrCodeVisitor();
+            root.jjtAccept(irCode, buffer);
+            buffer.flush();
+         }
+         catch (IOException e) {
+            System.out.println("Failed to write LLVM code to file");
+            e.printStackTrace(System.out);
+         }
+
+      }
+      catch(ParseException e) {
+         System.out.println(e.getMessage());
+      }
+   }
+
+}
+
+PARSER_END(HOPE1)
+
+/* Section 3: Token Definitions */
+TOKEN_MGR_DECLS : { static int commentNesting = 0; }
+
+/* Ignores whitespace characters */
+SKIP : {
+   " " | "\t" | "\n" | "\r" | "\f"
+}
+
+/* Comments */
+SKIP : {
+   "/*" { commentNesting++; } : IN_COMMENT |
+   "//" : IN_SINGLE_LINE_COMMENT
+}
+
+<IN_COMMENT> SKIP: {
+   "/*" { commentNesting++; } |
+   "*/" { commentNesting--; if(commentNesting == 0) { SwitchTo(DEFAULT); } } |
+   <~[]>
+}
+
+<IN_SINGLE_LINE_COMMENT> SKIP: {
+   <"\n" | "\r" | "\r\n"> : DEFAULT |
+   <~[]>
+}
+
+TOKEN [IGNORE_CASE] : /* Keywords */
+{
+    <PRINT : "print">
+}
+
+TOKEN : /* Punctuation */
+{
+   <LBR : "("> |
+   <RBR : ")"> |
+   <SEMIC : ";"> |
+   <PLUS_SIGN : "+"> |
+   <MINUS_SIGN : "-"> |
+   <MUL_SIGN : "*"> |
+   <DIV_SIGN : "/">
+}
+
+TOKEN : /* Numbers and identifiers */
+{
+   <NUM : ("0" | <INTEGER_LITERAL>)> |
+   <#INTEGER_LITERAL : ["1"-"9"](["0"-"9"])*>
+}
+
+TOKEN : /* Unrecognized tokens */
+{
+    <OTHER : ~[]>
+}
+
+/* Section 4: Grammar */
+
+SimpleNode program() : {}
+{
+   statement_block() <EOF>
+   { return jjtThis; }
+}
+
+void statement_block() : {}
+{
+   statement() <SEMIC> statement_block() | {}
+}
+
+void statement() : {}
+{
+   <PRINT> <LBR> expression() <RBR>
+}
+
+void expression() #void : {}
+{
+   fragment() (binary_arith_op() fragment() #expression(3))*
+}
+
+void fragment() : { Token t; }
+{
+   ( t = <NUM> ) { jjtThis.value = t.image; }
+}
+
+void binary_arith_op() : { Token t; }
+{
+   ( t = <PLUS_SIGN> | t = <MINUS_SIGN> | t = <MUL_SIGN> | t = <DIV_SIGN> ) { jjtThis.value = t.image; }
+}
