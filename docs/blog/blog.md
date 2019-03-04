@@ -23,3 +23,9 @@ The next step is to write up a complete analysis of the data, and create a langu
 Due to a brief illness, the analysis was not finished. The language definition is complete, with the exception of arrays. I have decided to only include arrays in my language, as I believe including both arrays and lists could be confusing to the student. I have also decided to use pass-by-value, as I believe it will be easier to understand for the students. I successfully broke my language down into a series of sub-languages which I will be working on for the next few weeks.
 My goal for the next week is to complete the first three sub-languages and complete my analysis.
 In terms of testing, I will write test for each sub-language. However, each language will also use the tests of the previous languages. For example, the second sub-language will use the second set of tests as well as the first.
+
+## My Fourth Blog Entry
+
+01/03/19
+This week, I finished the write up of my analysis. I have mostly completed the first three sub-languages. The only things to be finished are the generating of executable LLVM, and some semantic checks in the third sub-language.
+My goal for next week is to finish the semantic checks, LLVM, and creating a testing structure. I am also aiming to finish the fourth and fifth sub-languages.

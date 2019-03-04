@@ -1,0 +1,232 @@
+/* Section 1: Options */
+options {
+   MULTI = true;
+   VISITOR = true;
+   JAVA_UNICODE_ESCAPE = true;
+}
+
+/* Section 2: Driver */
+PARSER_BEGIN(HOPE3)
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
+public class HOPE3 {
+
+   public static SymbolTable st = new SymbolTable();
+
+   public static void main(String args[]) {
+
+      HOPE3 parser = null;
+      String irFileName = "HOPE3.ll";
+
+      if(args.length == 0) {
+         System.out.println("Reading input...");
+         parser = new HOPE3(System.in);
+      }
+      else if(args.length == 1) {
+         try {
+            parser = new HOPE3(new FileInputStream(args[0]));
+            irFileName = args[0] + ".ll";
+         }
+         catch(FileNotFoundException e) {
+            System.err.println("File " + args[0] + " not found");
+            return;
+         }
+      }
+      else {
+         System.out.println("You must use the following format:");
+         System.out.println("java HOPE3 inputfile");
+      }
+
+      try{
+         SimpleNode root = parser.program();
+
+         System.out.println("Abstract Syntax Tree:");
+         root.dump(">");
+
+         System.out.println("\nProgram:");
+         PrintVisitor pv = new PrintVisitor();
+         root.jjtAccept(pv, "");
+
+         System.out.println("\nSymbol Table:");
+         st.print();
+
+         System.out.println("\nSemantic Analysis:");
+         SemanticVisitor sv = new SemanticVisitor();
+         root.jjtAccept(sv, st);
+
+         // System.out.println("Writing LLVM code to: " + irFileName);
+         //
+         // try {
+         //    Context context = new Context(new BufferedWriter(new FileWriter(irFileName)));
+         //    IrCodeVisitor irCode = new IrCodeVisitor();
+         //    root.jjtAccept(irCode, context);
+         //    context.buffer.flush();
+         // }
+         // catch (IOException e) {
+         //    System.out.println("Failed to write LLVM code to file");
+         //    e.printStackTrace(System.out);
+         // }
+
+      }
+      catch(ParseException e) {
+         System.out.println(e.getMessage());
+      }
+   }
+
+}
+
+PARSER_END(HOPE3)
+
+/* Section 3: Token Definitions */
+TOKEN_MGR_DECLS : { static int commentNesting = 0; }
+
+/* Ignores whitespace characters */
+SKIP : {
+   " " | "\t" | "\n" | "\r" | "\f"
+}
+
+/* Comments */
+SKIP : {
+   "/*" { commentNesting++; } : IN_COMMENT |
+   "//" : IN_SINGLE_LINE_COMMENT
+}
+
+<IN_COMMENT> SKIP: {
+   "/*" { commentNesting++; } |
+   "*/" { commentNesting--; if(commentNesting == 0) { SwitchTo(DEFAULT); } } |
+   <~[]>
+}
+
+<IN_SINGLE_LINE_COMMENT> SKIP: {
+   <"\n" | "\r" | "\r\n"> : DEFAULT |
+   <~[]>
+}
+
+TOKEN [IGNORE_CASE] : /* Keywords */
+{
+    <PRINT : "print"> |
+    <INT : "int"> |
+    <STRING : "string"> |
+    <BOOL : "boolean"> |
+    <TRUE : "true"> |
+    <FALSE : "false">
+}
+
+TOKEN : /* Punctuation */
+{
+   <LBR : "("> |
+   <RBR : ")"> |
+   <SEMIC : ";"> |
+   <PLUS_SIGN : "+"> |
+   <MINUS_SIGN : "-"> |
+   <MUL_SIGN : "*"> |
+   <DIV_SIGN : "/"> |
+   <EQUALS : "="> |
+   <OR : "|"> |
+   <AND : "&"> |
+   <QUOTE : "\"">
+}
+
+TOKEN : /* Numbers and identifiers */
+{
+   <NUM : ("0" | <INTEGER_LITERAL>)> |
+   <#INTEGER_LITERAL : ["1"-"9"](["0"-"9"])*> |
+   <ID : <LETTER>(<LETTER> | <INTEGER_LITERAL> | "_")*> |
+   <STRING_LITERAL : "\""(<LETTER> | <INTEGER_LITERAL> | " " | "'" | "!")* "\""> |
+   <#LETTER : ["A"-"Z","a"-"z"]>
+}
+
+TOKEN : /* Unrecognized tokens */
+{
+    <OTHER : ~[]>
+}
+
+/* Section 4: Grammar */
+
+SimpleNode program() : {}
+{
+   statement_block() <EOF>
+   { return jjtThis; }
+}
+
+void statement_block() : {}
+{
+   statement() <SEMIC> statement_block() | {}
+}
+
+void statement() : {}
+{
+   print() |
+   assignment() |
+   declaration()
+}
+
+void expression() #void : {}
+{
+   fragment() ( binary_op() fragment() #expression(3) )*
+}
+
+void fragment() #void : {}
+{
+   integer() | string() | bool() | identifier()
+}
+
+void integer() : { Token t; }
+{
+   ( t = <NUM> )  { jjtThis.value = t.image; }
+}
+
+void string() : { Token t; }
+{
+   ( t = <STRING_LITERAL> ) { jjtThis.value = t.image; }
+}
+
+void bool() : { Token t; }
+{
+   ( t = <TRUE> | t = <FALSE> ) { jjtThis.value = t.image; }
+}
+
+void assignment() : {}
+{
+   identifier() <EQUALS> expression()
+}
+
+void declaration() : { String type; String id; }
+{
+   type = type() id = identifier() <EQUALS> expression() { st.insert(id, type); }
+}
+
+void print() : {}
+{
+   <PRINT> <LBR> expression() <RBR>
+}
+
+String identifier() : { Token t; }
+{
+   ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
+}
+
+String type() : { Token t; }
+{
+   ( t = <INT> | t = <STRING> | t = <BOOL> ) { jjtThis.value = t.image; return t.image; }
+}
+
+void binary_op() : {}
+{
+   binary_arith_op() | binary_logic_op()
+}
+
+void binary_arith_op() : { Token t; }
+{
+   ( t = <PLUS_SIGN> | t = <MINUS_SIGN> | t = <MUL_SIGN> | t = <DIV_SIGN> ) { jjtThis.value = t.image; }
+}
+
+void binary_logic_op() : { Token t; }
+{
+   ( t = <AND> | t = <OR> ) { jjtThis.value = t.image; }
+}
