@@ -137,12 +137,12 @@ SimpleNode program() : {}
 
 void statement_block() : {}
 {
-   statement() <SEMIC> statement_block() | {}
+   statement() statement_block() | {}
 }
 
 void statement() : {}
 {
-   <PRINT> <LBR> expression() <RBR>
+   <PRINT> <LBR> expression() <RBR> <SEMIC>
 }
 
 void expression() #void : {}

@@ -1,0 +1,8 @@
+int a = 1;
+int b = 2;
+if (b > a) {
+   b = b - a;
+}
+else {
+   b = b + a;
+}

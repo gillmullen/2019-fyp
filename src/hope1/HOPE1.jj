@@ -178,11 +178,11 @@ void statement_block() : {/*@bgen(jjtree) statement_block */
 {/*@bgen(jjtree) statement_block */
    try {
 /*@egen*/
-   statement() <SEMIC> statement_block() |/*@bgen(jjtree)*/
-                                           {
-                                             jjtree.closeNodeScope(jjtn000, true);
-                                             jjtc000 = false;
-                                           }
+   statement() statement_block() |/*@bgen(jjtree)*/
+                                   {
+                                     jjtree.closeNodeScope(jjtn000, true);
+                                     jjtc000 = false;
+                                   }
 /*@egen*/ {}/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
@@ -214,7 +214,7 @@ void statement() : {/*@bgen(jjtree) statement */
 {/*@bgen(jjtree) statement */
    try {
 /*@egen*/
-   <PRINT> <LBR> expression() <RBR>/*@bgen(jjtree)*/
+   <PRINT> <LBR> expression() <RBR> <SEMIC>/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);

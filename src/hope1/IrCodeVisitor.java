@@ -98,20 +98,20 @@ public class IrCodeVisitor implements HOPE1Visitor {
             command = result + " = sub i32 " + arg1 + ", " + arg2;
          }
          else if ((String) node.jjtGetChild(1).jjtAccept(this, data) == "*") {
-            command = result + " = sub i32 " + arg1 + ", " + arg2;
+            command = result + " = mul i32 " + arg1 + ", " + arg2;
          }
          else {
             command = result + " = sdiv i32 " + arg1 + ", " + arg2;
          }
-      }
 
-      try {
-         buffer.write(command);
-         buffer.newLine();
-      }
-      catch (IOException e) {
-         System.out.println("Failed to write IR code of expression to file");
-         e.printStackTrace(System.out);
+         try {
+            buffer.write(command);
+            buffer.newLine();
+         }
+         catch (IOException e) {
+            System.out.println("Failed to write IR code of expression to file");
+            e.printStackTrace(System.out);
+         }
       }
       return result;
    }

@@ -105,13 +105,12 @@ public class HOPE1/*@bgen(jjtree)*/implements HOPE1TreeConstants, HOPE1Constants
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case PRINT:
         statement();
-        jj_consume_token(SEMIC);
         statement_block();
         break;
       default:
         jj_la1[0] = jj_gen;
-                                             jjtree.closeNodeScope(jjtn000, true);
-                                             jjtc000 = false;
+                                     jjtree.closeNodeScope(jjtn000, true);
+                                     jjtc000 = false;
 
       }
     } catch (Throwable jjte000) {
@@ -145,6 +144,7 @@ public class HOPE1/*@bgen(jjtree)*/implements HOPE1TreeConstants, HOPE1Constants
       jj_consume_token(LBR);
       expression();
       jj_consume_token(RBR);
+      jj_consume_token(SEMIC);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
