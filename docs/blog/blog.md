@@ -29,3 +29,14 @@ In terms of testing, I will write test for each sub-language. However, each lang
 01/03/19
 This week, I finished the write up of my analysis. I have mostly completed the first three sub-languages. The only things to be finished are the generating of executable LLVM, and some semantic checks in the third sub-language.
 My goal for next week is to finish the semantic checks, LLVM, and creating a testing structure. I am also aiming to finish the fourth and fifth sub-languages.
+
+## My Fifth Blog Entry
+
+11/03/19
+This week, I finished the syntax and semantic of the fourth and fifth sub-languages. I am leaving the IR generation until I have finished reinstalling LLVM, as the first time installing was unsuccessful. Currently, I am slightly behind schedule.
+My aim for the next week is to finish reinstalling LLVM, to finish sub-languages 4 and 5, do syntax and semantics for the sixth, and catch up on testing.
+
+## My Sixth Blog Entry
+
+16/03/19
+Multiple attempts of reinstalling LLVM has been unsuccessful, owing mainly to my use of Windows which LLVM does not work well with.  In order to overcome this, my plan is to create a Linux Virtual Machine and install LLVM on there, as the installation process seems simpler for Linux.
