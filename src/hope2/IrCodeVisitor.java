@@ -66,18 +66,20 @@ public class IrCodeVisitor implements HOPE2Visitor {
    }
 
    public Object visit(ASTstatement node, Object data) {
-      BufferedWriter buffer = (BufferedWriter) data;
-      try {
-         String result = (String) node.jjtGetChild(0).jjtAccept(this, data);
-         buffer.write("call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i32 0, i32 0), i32 ");
-         buffer.write(result);
-         buffer.write(")");
-         buffer.newLine();
-      }
-      catch (IOException e) {
-         System.out.println("Failed to write IR code of statement to file");
-         e.printStackTrace(System.out);
-      }
+      // Context context = (Context) data;
+      // BufferedWriter buffer = context.buffer;
+      // try {
+      //    String result = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      //    buffer.write("call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i32 0, i32 0), i32 ");
+      //    buffer.write(result);
+      //    buffer.write(")");
+      //    buffer.newLine();
+      // }
+      // catch (IOException e) {
+      //    System.out.println("Failed to write IR code of statement to file");
+      //    e.printStackTrace(System.out);
+      // }
+      node.jjtGetChild(0).jjtAccept(this, data);
       return data;
    }
 
@@ -102,7 +104,7 @@ public class IrCodeVisitor implements HOPE2Visitor {
             command = result + " = sub i32 " + arg1 + ", " + arg2;
          }
          else if ((String) node.jjtGetChild(1).jjtAccept(this, data) == "*") {
-            command = result + " = sub i32 " + arg1 + ", " + arg2;
+            command = result + " = mul i32 " + arg1 + ", " + arg2;
          }
          else {
             command = result + " = sdiv i32 " + arg1 + ", " + arg2;
@@ -134,7 +136,7 @@ public class IrCodeVisitor implements HOPE2Visitor {
       BufferedWriter buffer = context.buffer;
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String expr = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      String type = "int";
+      String type = "i32";
       String result = "store " + type + " " + expr + ", " + type + "* %.p." + id;
 
       try {
@@ -185,8 +187,31 @@ public class IrCodeVisitor implements HOPE2Visitor {
       return data;
    }
 
-   public Object visit (ASTidentifier node, Object data) {
+   public Object visit (ASTlhs_identifier node, Object data) {
       return node.value;
+   }
+
+   public Object visit (ASTrhs_identifier node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+
+      String id = (String) node.value;
+      String type = "i32";
+      String tmp = getTmp();
+      String command = tmp + " = " + "load " + type + ", " + type + "* %.p." + id;
+
+      try
+      {
+         buffer.write(command);
+         buffer.newLine();
+      }
+      catch (IOException e)
+      {
+         System.out.println ("Failed to write IR code for RHS identifier to file");
+         e.printStackTrace (System.out);
+      }
+
+      return tmp;
    }
 
    public Object visit (ASTtype node, Object data) {

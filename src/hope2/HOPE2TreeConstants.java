@@ -10,9 +10,10 @@ public interface HOPE2TreeConstants
   public int JJTASSIGNMENT = 6;
   public int JJTDECLARATION = 7;
   public int JJTPRINT = 8;
-  public int JJTIDENTIFIER = 9;
-  public int JJTTYPE = 10;
-  public int JJTBINARY_ARITH_OP = 11;
+  public int JJTLHS_IDENTIFIER = 9;
+  public int JJTRHS_IDENTIFIER = 10;
+  public int JJTTYPE = 11;
+  public int JJTBINARY_ARITH_OP = 12;
 
 
   public String[] jjtNodeName = {
@@ -25,9 +26,10 @@ public interface HOPE2TreeConstants
     "assignment",
     "declaration",
     "print",
-    "identifier",
+    "lhs_identifier",
+    "rhs_identifier",
     "type",
     "binary_arith_op",
   };
 }
-/* JavaCC - OriginalChecksum=1d921c12269a8bfa31e7fbc4c2f33b05 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e1a099e133bdf7aa3a6dcd3f6c6502c8 (do not edit this line) */

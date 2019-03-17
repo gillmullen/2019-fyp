@@ -48,24 +48,24 @@ public class HOPE2 {
          System.out.println("Abstract Syntax Tree:");
          root.dump(">");
 
-         System.out.println("\nProgram:");
-         PrintVisitor pv = new PrintVisitor();
-         root.jjtAccept(pv, "");
-
-         System.out.println("\nSymbol Table:");
-         st.print();
-
-         System.out.println("\nSemantic Analysis:");
-         SemanticVisitor sv = new SemanticVisitor();
-         root.jjtAccept(sv, st);
+         // System.out.println("\nProgram:");
+         // PrintVisitor pv = new PrintVisitor();
+         // root.jjtAccept(pv, "");
+         //
+         // System.out.println("\nSymbol Table:");
+         // st.print();
+         //
+         // System.out.println("\nSemantic Analysis:");
+         // SemanticVisitor sv = new SemanticVisitor();
+         // root.jjtAccept(sv, st);
 
          System.out.println("Writing LLVM code to: " + irFileName);
 
          try {
-            Context context = new Context(new BufferedWriter(new FileWriter(irFileName)));
+            Context c = new Context(new BufferedWriter(new FileWriter(irFileName)));
             IrCodeVisitor irCode = new IrCodeVisitor();
-            root.jjtAccept(irCode, context);
-            context.buffer.flush();
+            root.jjtAccept(irCode, c);
+            c.buffer.flush();
          }
          catch (IOException e) {
             System.out.println("Failed to write LLVM code to file");
@@ -165,7 +165,7 @@ void expression() #void : {}
 
 void fragment() #void : {}
 {
-   integer() | identifier()
+   integer() | rhs_identifier()
 }
 
 void integer() : { Token t; }
@@ -175,12 +175,12 @@ void integer() : { Token t; }
 
 void assignment() : {}
 {
-   identifier() <EQUALS> expression()
+   lhs_identifier() <EQUALS> expression()
 }
 
 void declaration() : { String id; }
 {
-   type() id = identifier() <EQUALS> expression() { st.insert(id); }
+   type() id = lhs_identifier() { st.insert(id); }
 }
 
 void print() : {}
@@ -188,7 +188,12 @@ void print() : {}
    <PRINT> <LBR> expression() <RBR>
 }
 
-String identifier() : { Token t; }
+String lhs_identifier() : { Token t; }
+{
+   ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
+}
+
+String rhs_identifier() : { Token t; }
 {
    ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
 }

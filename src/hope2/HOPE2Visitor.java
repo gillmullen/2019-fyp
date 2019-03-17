@@ -10,8 +10,9 @@ public interface HOPE2Visitor
   public Object visit(ASTassignment node, Object data);
   public Object visit(ASTdeclaration node, Object data);
   public Object visit(ASTprint node, Object data);
-  public Object visit(ASTidentifier node, Object data);
+  public Object visit(ASTlhs_identifier node, Object data);
+  public Object visit(ASTrhs_identifier node, Object data);
   public Object visit(ASTtype node, Object data);
   public Object visit(ASTbinary_arith_op node, Object data);
 }
-/* JavaCC - OriginalChecksum=27b91f6f0a1d9047e5a73a3793afdbc0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=48b7ce485d22c430855e4d75a7b0b10e (do not edit this line) */

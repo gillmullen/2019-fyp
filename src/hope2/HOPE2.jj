@@ -52,24 +52,24 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants/*@egen*/ {/*@bg
          System.out.println("Abstract Syntax Tree:");
          root.dump(">");
 
-         System.out.println("\nProgram:");
-         PrintVisitor pv = new PrintVisitor();
-         root.jjtAccept(pv, "");
-
-         System.out.println("\nSymbol Table:");
-         st.print();
-
-         System.out.println("\nSemantic Analysis:");
-         SemanticVisitor sv = new SemanticVisitor();
-         root.jjtAccept(sv, st);
+         // System.out.println("\nProgram:");
+         // PrintVisitor pv = new PrintVisitor();
+         // root.jjtAccept(pv, "");
+         //
+         // System.out.println("\nSymbol Table:");
+         // st.print();
+         //
+         // System.out.println("\nSemantic Analysis:");
+         // SemanticVisitor sv = new SemanticVisitor();
+         // root.jjtAccept(sv, st);
 
          System.out.println("Writing LLVM code to: " + irFileName);
 
          try {
-            Context context = new Context(new BufferedWriter(new FileWriter(irFileName)));
+            Context c = new Context(new BufferedWriter(new FileWriter(irFileName)));
             IrCodeVisitor irCode = new IrCodeVisitor();
-            root.jjtAccept(irCode, context);
-            context.buffer.flush();
+            root.jjtAccept(irCode, c);
+            c.buffer.flush();
          }
          catch (IOException e) {
             System.out.println("Failed to write LLVM code to file");
@@ -284,7 +284,7 @@ void expression()       : {}
 
 void fragment()       : {}
 {
-   integer() | identifier()
+   integer() | rhs_identifier()
 }
 
 void integer() : {/*@bgen(jjtree) integer */
@@ -317,7 +317,7 @@ void assignment() : {/*@bgen(jjtree) assignment */
 {/*@bgen(jjtree) assignment */
    try {
 /*@egen*/
-   identifier() <EQUALS> expression()/*@bgen(jjtree)*/
+   lhs_identifier() <EQUALS> expression()/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -348,11 +348,11 @@ void declaration() : {/*@bgen(jjtree) declaration */
 {/*@bgen(jjtree) declaration */
    try {
 /*@egen*/
-   type() id = identifier() <EQUALS> expression()/*@bgen(jjtree)*/
-                                                  {
-                                                    jjtree.closeNodeScope(jjtn000, true);
-                                                    jjtc000 = false;
-                                                  }
+   type() id = lhs_identifier()/*@bgen(jjtree)*/
+                                {
+                                  jjtree.closeNodeScope(jjtn000, true);
+                                  jjtc000 = false;
+                                }
 /*@egen*/ { st.insert(id); }/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
@@ -407,12 +407,34 @@ void print() : {/*@bgen(jjtree) print */
 /*@egen*/
 }
 
-String identifier() : {/*@bgen(jjtree) identifier */
-                        ASTidentifier jjtn000 = new ASTidentifier(JJTIDENTIFIER);
-                        boolean jjtc000 = true;
-                        jjtree.openNodeScope(jjtn000);
+String lhs_identifier() : {/*@bgen(jjtree) lhs_identifier */
+                            ASTlhs_identifier jjtn000 = new ASTlhs_identifier(JJTLHS_IDENTIFIER);
+                            boolean jjtc000 = true;
+                            jjtree.openNodeScope(jjtn000);
 /*@egen*/ Token t; }
-{/*@bgen(jjtree) identifier */
+{/*@bgen(jjtree) lhs_identifier */
+   try {
+/*@egen*/
+   ( t = <ID> )/*@bgen(jjtree)*/
+                {
+                  jjtree.closeNodeScope(jjtn000, true);
+                  jjtc000 = false;
+                }
+/*@egen*/ { jjtn000.value = t.image; return t.image; }/*@bgen(jjtree)*/
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+   }
+/*@egen*/
+}
+
+String rhs_identifier() : {/*@bgen(jjtree) rhs_identifier */
+                            ASTrhs_identifier jjtn000 = new ASTrhs_identifier(JJTRHS_IDENTIFIER);
+                            boolean jjtc000 = true;
+                            jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }
+{/*@bgen(jjtree) rhs_identifier */
    try {
 /*@egen*/
    ( t = <ID> )/*@bgen(jjtree)*/

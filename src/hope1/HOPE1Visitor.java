@@ -9,4 +9,4 @@ public interface HOPE1Visitor
   public Object visit(ASTfragment node, Object data);
   public Object visit(ASTbinary_arith_op node, Object data);
 }
-/* JavaCC - OriginalChecksum=58e3ff1f84cad499f1ce7848df5cde4b (do not edit this line) */
+/* JavaCC - OriginalChecksum=6ace362057f28f1219bb727895ac5668 (do not edit this line) */

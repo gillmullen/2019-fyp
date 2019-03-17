@@ -3,7 +3,7 @@ declare i32 @printf(i8*, ...) #1
 define i32 @main ()
 {
 %.t2 = add i32 1, 2
-%.t1 = sub i32 %.t2, 3
+%.t1 = mul i32 %.t2, 3
 call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i32 0, i32 0), i32 %.t1)
 ret i32 0
 }

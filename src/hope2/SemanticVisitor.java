@@ -75,10 +75,10 @@ public class SemanticVisitor implements HOPE2Visitor {
    }
 
    public Object visit (ASTprint node, Object data) {
-      return (node.jjtGetChild(0).jjtAccept(this, data));
+      return node.jjtGetChild(0).jjtAccept(this, data);
    }
 
-   public Object visit (ASTidentifier node, Object data) {
+   public Object visit (ASTlhs_identifier node, Object data) {
       SimpleNode parent = (SimpleNode) node.jjtGetParent();
       String type = parent.toString();
       String value = (String) node.jjtGetValue();
@@ -94,6 +94,10 @@ public class SemanticVisitor implements HOPE2Visitor {
          }
       }
 
+      return DataType.Integer;
+   }
+
+   public Object visit (ASTrhs_identifier node, Object data) {
       return DataType.Integer;
    }
 

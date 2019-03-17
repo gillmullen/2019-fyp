@@ -39,24 +39,24 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
          System.out.println("Abstract Syntax Tree:");
          root.dump(">");
 
-         System.out.println("\u005cnProgram:");
-         PrintVisitor pv = new PrintVisitor();
-         root.jjtAccept(pv, "");
-
-         System.out.println("\u005cnSymbol Table:");
-         st.print();
-
-         System.out.println("\u005cnSemantic Analysis:");
-         SemanticVisitor sv = new SemanticVisitor();
-         root.jjtAccept(sv, st);
+         // System.out.println("\nProgram:");
+         // PrintVisitor pv = new PrintVisitor();
+         // root.jjtAccept(pv, "");
+         //
+         // System.out.println("\nSymbol Table:");
+         // st.print();
+         //
+         // System.out.println("\nSemantic Analysis:");
+         // SemanticVisitor sv = new SemanticVisitor();
+         // root.jjtAccept(sv, st);
 
          System.out.println("Writing LLVM code to: " + irFileName);
 
          try {
-            Context context = new Context(new BufferedWriter(new FileWriter(irFileName)));
+            Context c = new Context(new BufferedWriter(new FileWriter(irFileName)));
             IrCodeVisitor irCode = new IrCodeVisitor();
-            root.jjtAccept(irCode, context);
-            context.buffer.flush();
+            root.jjtAccept(irCode, c);
+            c.buffer.flush();
          }
          catch (IOException e) {
             System.out.println("Failed to write LLVM code to file");
@@ -235,7 +235,7 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
       integer();
       break;
     case ID:
-      identifier();
+      rhs_identifier();
       break;
     default:
       jj_la1[3] = jj_gen;
@@ -267,7 +267,7 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      identifier();
+      lhs_identifier();
       jj_consume_token(EQUALS);
       expression();
     } catch (Throwable jjte000) {
@@ -298,12 +298,10 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
                        jjtree.openNodeScope(jjtn000);String id;
     try {
       type();
-      id = identifier();
-      jj_consume_token(EQUALS);
-      expression();
-                                                    jjtree.closeNodeScope(jjtn000, true);
-                                                    jjtc000 = false;
-                                                    st.insert(id);
+      id = lhs_identifier();
+                                  jjtree.closeNodeScope(jjtn000, true);
+                                  jjtc000 = false;
+                                  st.insert(id);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -356,11 +354,29 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
     }
   }
 
-  static final public String identifier() throws ParseException {
-                       /*@bgen(jjtree) identifier */
-                        ASTidentifier jjtn000 = new ASTidentifier(JJTIDENTIFIER);
-                        boolean jjtc000 = true;
-                        jjtree.openNodeScope(jjtn000);Token t;
+  static final public String lhs_identifier() throws ParseException {
+                           /*@bgen(jjtree) lhs_identifier */
+                            ASTlhs_identifier jjtn000 = new ASTlhs_identifier(JJTLHS_IDENTIFIER);
+                            boolean jjtc000 = true;
+                            jjtree.openNodeScope(jjtn000);Token t;
+    try {
+      t = jj_consume_token(ID);
+                  jjtree.closeNodeScope(jjtn000, true);
+                  jjtc000 = false;
+                  jjtn000.value = t.image; {if (true) return t.image;}
+    } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public String rhs_identifier() throws ParseException {
+                           /*@bgen(jjtree) rhs_identifier */
+                            ASTrhs_identifier jjtn000 = new ASTrhs_identifier(JJTRHS_IDENTIFIER);
+                            boolean jjtc000 = true;
+                            jjtree.openNodeScope(jjtn000);Token t;
     try {
       t = jj_consume_token(ID);
                   jjtree.closeNodeScope(jjtn000, true);
