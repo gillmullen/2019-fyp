@@ -12,9 +12,9 @@ public interface HOPE3TreeConstants
   public int JJTASSIGNMENT = 8;
   public int JJTDECLARATION = 9;
   public int JJTPRINT = 10;
-  public int JJTIDENTIFIER = 11;
-  public int JJTTYPE = 12;
-  public int JJTBINARY_OP = 13;
+  public int JJTLHS_IDENTIFIER = 11;
+  public int JJTRHS_IDENTIFIER = 12;
+  public int JJTTYPE = 13;
   public int JJTBINARY_ARITH_OP = 14;
   public int JJTBINARY_LOGIC_OP = 15;
 
@@ -31,11 +31,11 @@ public interface HOPE3TreeConstants
     "assignment",
     "declaration",
     "print",
-    "identifier",
+    "lhs_identifier",
+    "rhs_identifier",
     "type",
-    "binary_op",
     "binary_arith_op",
     "binary_logic_op",
   };
 }
-/* JavaCC - OriginalChecksum=e41e96ba8915dc795d88922f22024df7 (do not edit this line) */
+/* JavaCC - OriginalChecksum=06134dbad5ba35e64c0f7d8cff12df6b (do not edit this line) */

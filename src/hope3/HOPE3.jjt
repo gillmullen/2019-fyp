@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class HOPE3 {
 
@@ -59,18 +60,18 @@ public class HOPE3 {
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         // System.out.println("Writing LLVM code to: " + irFileName);
-         //
-         // try {
-         //    Context context = new Context(new BufferedWriter(new FileWriter(irFileName)));
-         //    IrCodeVisitor irCode = new IrCodeVisitor();
-         //    root.jjtAccept(irCode, context);
-         //    context.buffer.flush();
-         // }
-         // catch (IOException e) {
-         //    System.out.println("Failed to write LLVM code to file");
-         //    e.printStackTrace(System.out);
-         // }
+         System.out.println("Writing LLVM code to: " + irFileName);
+
+         try {
+            Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
+            IrCodeVisitor irCode = new IrCodeVisitor();
+            root.jjtAccept(irCode, context);
+            context.buffer.flush();
+         }
+         catch (IOException e) {
+            System.out.println("Failed to write LLVM code to file");
+            e.printStackTrace(System.out);
+         }
 
       }
       catch(ParseException e) {
@@ -168,12 +169,12 @@ void statement() : {}
 
 void expression() #void : {}
 {
-   fragment() ( binary_op() fragment() #expression(3) )*
+   fragment() ( ( binary_arith_op() | binary_logic_op() ) fragment() #expression(3) )*
 }
 
 void fragment() #void : {}
 {
-   integer() | string() | bool() | identifier()
+   integer() | string() | bool() | rhs_identifier()
 }
 
 void integer() : { Token t; }
@@ -193,12 +194,12 @@ void bool() : { Token t; }
 
 void assignment() : {}
 {
-   identifier() <EQUALS> expression()
+   lhs_identifier() <EQUALS> expression()
 }
 
 void declaration() : { String type; String id; }
 {
-   type = type() id = identifier() <EQUALS> expression() { st.insert(id, type); }
+   type = type() id = lhs_identifier() { st.insert(id, type); }
 }
 
 void print() : {}
@@ -206,7 +207,12 @@ void print() : {}
    <PRINT> <LBR> expression() <RBR>
 }
 
-String identifier() : { Token t; }
+String lhs_identifier() : { Token t; }
+{
+   ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
+}
+
+String rhs_identifier() : { Token t; }
 {
    ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
 }
@@ -214,11 +220,6 @@ String identifier() : { Token t; }
 String type() : { Token t; }
 {
    ( t = <INT> | t = <STRING> | t = <BOOL> ) { jjtThis.value = t.image; return t.image; }
-}
-
-void binary_op() : {}
-{
-   binary_arith_op() | binary_logic_op()
 }
 
 void binary_arith_op() : { Token t; }

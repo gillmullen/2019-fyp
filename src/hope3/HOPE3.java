@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants {/*@bgen(jjtree)*/
   protected static JJTHOPE3State jjtree = new JJTHOPE3State();
@@ -50,18 +51,18 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         // System.out.println("Writing LLVM code to: " + irFileName);
-         //
-         // try {
-         //    Context context = new Context(new BufferedWriter(new FileWriter(irFileName)));
-         //    IrCodeVisitor irCode = new IrCodeVisitor();
-         //    root.jjtAccept(irCode, context);
-         //    context.buffer.flush();
-         // }
-         // catch (IOException e) {
-         //    System.out.println("Failed to write LLVM code to file");
-         //    e.printStackTrace(System.out);
-         // }
+         System.out.println("Writing LLVM code to: " + irFileName);
+
+         try {
+            Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
+            IrCodeVisitor irCode = new IrCodeVisitor();
+            root.jjtAccept(irCode, context);
+            context.buffer.flush();
+         }
+         catch (IOException e) {
+            System.out.println("Failed to write LLVM code to file");
+            e.printStackTrace(System.out);
+         }
 
       }
       catch(ParseException e) {
@@ -207,30 +208,45 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
         jj_la1[2] = jj_gen;
         break label_1;
       }
-      binary_op();
-                              ASTexpression jjtn001 = new ASTexpression(JJTEXPRESSION);
-                              boolean jjtc001 = true;
-                              jjtree.openNodeScope(jjtn001);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case PLUS_SIGN:
+      case MINUS_SIGN:
+      case MUL_SIGN:
+      case DIV_SIGN:
+        binary_arith_op();
+        break;
+      case OR:
+      case AND:
+        binary_logic_op();
+        break;
+      default:
+        jj_la1[3] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+                                                            ASTexpression jjtn001 = new ASTexpression(JJTEXPRESSION);
+                                                            boolean jjtc001 = true;
+                                                            jjtree.openNodeScope(jjtn001);
       try {
         fragment();
       } catch (Throwable jjte001) {
-                              if (jjtc001) {
-                                jjtree.clearNodeScope(jjtn001);
-                                jjtc001 = false;
-                              } else {
-                                jjtree.popNode();
-                              }
-                              if (jjte001 instanceof RuntimeException) {
-                                {if (true) throw (RuntimeException)jjte001;}
-                              }
-                              if (jjte001 instanceof ParseException) {
-                                {if (true) throw (ParseException)jjte001;}
-                              }
-                              {if (true) throw (Error)jjte001;}
+                                                            if (jjtc001) {
+                                                              jjtree.clearNodeScope(jjtn001);
+                                                              jjtc001 = false;
+                                                            } else {
+                                                              jjtree.popNode();
+                                                            }
+                                                            if (jjte001 instanceof RuntimeException) {
+                                                              {if (true) throw (RuntimeException)jjte001;}
+                                                            }
+                                                            if (jjte001 instanceof ParseException) {
+                                                              {if (true) throw (ParseException)jjte001;}
+                                                            }
+                                                            {if (true) throw (Error)jjte001;}
       } finally {
-                              if (jjtc001) {
-                                jjtree.closeNodeScope(jjtn001,  3);
-                              }
+                                                            if (jjtc001) {
+                                                              jjtree.closeNodeScope(jjtn001,  3);
+                                                            }
       }
     }
   }
@@ -248,10 +264,10 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
       bool();
       break;
     case ID:
-      identifier();
+      rhs_identifier();
       break;
     default:
-      jj_la1[3] = jj_gen;
+      jj_la1[4] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -305,7 +321,7 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
         t = jj_consume_token(FALSE);
         break;
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[5] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -325,7 +341,7 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      identifier();
+      lhs_identifier();
       jj_consume_token(EQUALS);
       expression();
     } catch (Throwable jjte000) {
@@ -356,12 +372,10 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
                        jjtree.openNodeScope(jjtn000);String type; String id;
     try {
       type = type();
-      id = identifier();
-      jj_consume_token(EQUALS);
-      expression();
-                                                           jjtree.closeNodeScope(jjtn000, true);
-                                                           jjtc000 = false;
-                                                           st.insert(id, type);
+      id = lhs_identifier();
+                                         jjtree.closeNodeScope(jjtn000, true);
+                                         jjtc000 = false;
+                                         st.insert(id, type);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -414,11 +428,29 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
     }
   }
 
-  static final public String identifier() throws ParseException {
-                       /*@bgen(jjtree) identifier */
-                        ASTidentifier jjtn000 = new ASTidentifier(JJTIDENTIFIER);
-                        boolean jjtc000 = true;
-                        jjtree.openNodeScope(jjtn000);Token t;
+  static final public String lhs_identifier() throws ParseException {
+                           /*@bgen(jjtree) lhs_identifier */
+                            ASTlhs_identifier jjtn000 = new ASTlhs_identifier(JJTLHS_IDENTIFIER);
+                            boolean jjtc000 = true;
+                            jjtree.openNodeScope(jjtn000);Token t;
+    try {
+      t = jj_consume_token(ID);
+                  jjtree.closeNodeScope(jjtn000, true);
+                  jjtc000 = false;
+                  jjtn000.value = t.image; {if (true) return t.image;}
+    } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  static final public String rhs_identifier() throws ParseException {
+                           /*@bgen(jjtree) rhs_identifier */
+                            ASTrhs_identifier jjtn000 = new ASTrhs_identifier(JJTRHS_IDENTIFIER);
+                            boolean jjtc000 = true;
+                            jjtree.openNodeScope(jjtn000);Token t;
     try {
       t = jj_consume_token(ID);
                   jjtree.closeNodeScope(jjtn000, true);
@@ -449,7 +481,7 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
         t = jj_consume_token(BOOL);
         break;
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[6] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -462,49 +494,6 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
      }
     }
     throw new Error("Missing return statement in function");
-  }
-
-  static final public void binary_op() throws ParseException {
-                    /*@bgen(jjtree) binary_op */
-  ASTbinary_op jjtn000 = new ASTbinary_op(JJTBINARY_OP);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-    try {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case PLUS_SIGN:
-      case MINUS_SIGN:
-      case MUL_SIGN:
-      case DIV_SIGN:
-        binary_arith_op();
-        break;
-      case OR:
-      case AND:
-        binary_logic_op();
-        break;
-      default:
-        jj_la1[6] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-    } catch (Throwable jjte000) {
-     if (jjtc000) {
-       jjtree.clearNodeScope(jjtn000);
-       jjtc000 = false;
-     } else {
-       jjtree.popNode();
-     }
-     if (jjte000 instanceof RuntimeException) {
-       {if (true) throw (RuntimeException)jjte000;}
-     }
-     if (jjte000 instanceof ParseException) {
-       {if (true) throw (ParseException)jjte000;}
-     }
-     {if (true) throw (Error)jjte000;}
-    } finally {
-     if (jjtc000) {
-       jjtree.closeNodeScope(jjtn000, true);
-     }
-    }
   }
 
   static final public void binary_arith_op() throws ParseException {
@@ -587,10 +576,10 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x1e000,0x1e000,0x1bc00000,0x40060000,0x60000,0x1c000,0x1bc00000,0x3c00000,0x18000000,};
+      jj_la1_0 = new int[] {0x1e000,0x1e000,0x1bc00000,0x1bc00000,0x40060000,0x60000,0x1c000,0x3c00000,0x18000000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x1,0x1,0x0,0x3,0x0,0x0,0x0,0x0,0x0,};
+      jj_la1_1 = new int[] {0x1,0x1,0x0,0x0,0x3,0x0,0x0,0x0,0x0,};
    }
 
   /** Constructor with InputStream. */

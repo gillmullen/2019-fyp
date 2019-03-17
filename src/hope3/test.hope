@@ -1,9 +1,1 @@
-int var = 6 * 3;
-print(var);
-print(4);
-string var1 = "hello";
-print(var1);
-print("world");
-boolean var2 = true & false;
-print(var2);
-print(true);
+print("hello world");

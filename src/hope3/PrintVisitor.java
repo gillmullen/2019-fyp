@@ -61,6 +61,7 @@ public class PrintVisitor implements HOPE3Visitor {
 
    public Object visit (ASTassignment node, Object data) {
       node.jjtGetChild(0).jjtAccept(this, data); // identifier
+      System.out.print(" = ");
       node.jjtGetChild(1).jjtAccept(this, data); // expression
       return data;
    }
@@ -69,8 +70,6 @@ public class PrintVisitor implements HOPE3Visitor {
       node.jjtGetChild(0).jjtAccept(this, data); // type
       System.out.print(" ");
       node.jjtGetChild(1).jjtAccept(this, data); // identifier
-      System.out.print(" = ");
-      node.jjtGetChild(2).jjtAccept(this, data); // expression
       return data;
    }
 
@@ -81,18 +80,18 @@ public class PrintVisitor implements HOPE3Visitor {
       return data;
    }
 
-   public Object visit (ASTidentifier node, Object data) {
+   public Object visit (ASTlhs_identifier node, Object data) {
+      System.out.print(node.value);
+      return data;
+   }
+
+   public Object visit (ASTrhs_identifier node, Object data) {
       System.out.print(node.value);
       return data;
    }
 
    public Object visit (ASTtype node, Object data) {
       System.out.print(node.value);
-      return data;
-   }
-
-   public Object visit (ASTbinary_op node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
       return data;
    }
 

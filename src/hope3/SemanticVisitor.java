@@ -94,7 +94,7 @@ public class SemanticVisitor implements HOPE3Visitor {
       return (node.jjtGetChild(0).jjtAccept(this, data));
    }
 
-   public Object visit (ASTidentifier node, Object data) {
+   public Object visit (ASTlhs_identifier node, Object data) {
       SimpleNode parent = (SimpleNode) node.jjtGetParent();
       String type = parent.toString();
       String value = (String) node.value;
@@ -115,6 +115,10 @@ public class SemanticVisitor implements HOPE3Visitor {
       return DataType.Integer;
    }
 
+   public Object visit (ASTrhs_identifier node, Object data) {
+      return DataType.Integer;
+   }
+
    public Object visit (ASTtype node, Object data) {
       String type = (String) node.value;
       if(type.equals("int")) {
@@ -127,10 +131,6 @@ public class SemanticVisitor implements HOPE3Visitor {
          return DataType.String;
       }
       return DataType.TypeUnknown;
-   }
-
-   public Object visit (ASTbinary_op node, Object data) {
-      return (node.jjtGetChild(0).jjtAccept(this, data));
    }
 
    public Object visit (ASTbinary_arith_op node, Object data) {
