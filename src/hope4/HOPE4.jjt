@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class HOPE4 {
 
@@ -59,18 +60,18 @@ public class HOPE4 {
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         // System.out.println("Writing LLVM code to: " + irFileName);
-         //
-         // try {
-         //    Context context = new Context(new BufferedWriter(new FileWriter(irFileName)));
-         //    IrCodeVisitor irCode = new IrCodeVisitor();
-         //    root.jjtAccept(irCode, context);
-         //    context.buffer.flush();
-         // }
-         // catch (IOException e) {
-         //    System.out.println("Failed to write LLVM code to file");
-         //    e.printStackTrace(System.out);
-         // }
+         System.out.println("Writing LLVM code to: " + irFileName);
+
+         try {
+            Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
+            IrCodeVisitor irCode = new IrCodeVisitor();
+            root.jjtAccept(irCode, context);
+            context.buffer.flush();
+         }
+         catch (IOException e) {
+            System.out.println("Failed to write LLVM code to file");
+            e.printStackTrace(System.out);
+         }
 
       }
       catch(ParseException e) {
@@ -184,12 +185,12 @@ void expression() : {}
 
 void condition()  : {}
 {
-   fragment() ( comp_op() fragment() #condition(3) )*
+   fragment() ( comp_op() fragment() )*
 }
 
-void fragment() : {}
+void fragment() #void : {}
 {
-   integer() | string() | bool() | identifier()
+   integer() | string() | bool() | rhs_identifier()
 }
 
 void integer() : { Token t; }
@@ -209,12 +210,12 @@ void bool() : { Token t; }
 
 void assignment() : {}
 {
-   identifier() <EQUALS> expression() <SEMIC>
+   lhs_identifier() <EQUALS> expression() <SEMIC>
 }
 
 void declaration() : { String type; String id; }
 {
-   type = type() id = identifier() <EQUALS> expression() <SEMIC> { st.insert(id, type); }
+   type = type() id = lhs_identifier() <SEMIC> { st.insert(id, type); }
 }
 
 void print() : {}
@@ -227,7 +228,12 @@ void if_statement() : {}
    <IF> <LBR> condition() <RBR> <LCB> statement_block() <RCB> <ELSE> <LCB> statement_block() <RCB>
 }
 
-String identifier() : { Token t; }
+String lhs_identifier() : { Token t; }
+{
+   ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
+}
+
+String rhs_identifier() : { Token t; }
 {
    ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
 }

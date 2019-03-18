@@ -74,8 +74,9 @@ public class PrintVisitor implements HOPE4Visitor {
 
    public Object visit(ASTassignment node, Object data) {
       node.jjtGetChild(0).jjtAccept(this, data); // identifier
+      System.out.print(" = ");
       node.jjtGetChild(1).jjtAccept(this, data); // expression
-      System.out.print(" ;");
+      System.out.println(" ;");
       return data;
    }
 
@@ -83,8 +84,6 @@ public class PrintVisitor implements HOPE4Visitor {
       node.jjtGetChild(0).jjtAccept(this, data); // type
       System.out.print(" ");
       node.jjtGetChild(1).jjtAccept(this, data); // identifier
-      System.out.print(" = ");
-      node.jjtGetChild(2).jjtAccept(this, data); // expression
       System.out.println(" ;");
       return data;
    }
@@ -102,13 +101,18 @@ public class PrintVisitor implements HOPE4Visitor {
       node.jjtGetChild(0).jjtAccept(this, data); // condition
       System.out.println(" ) {");
       node.jjtGetChild(1).jjtAccept(this, data); // statement_block
-      System.out.println("\n}\nelse { ");
+      System.out.println("}\nelse { ");
       node.jjtGetChild(2).jjtAccept(this, data); // statement_block
-      System.out.println("\n}");
+      System.out.println("}");
       return data;
    }
 
-   public Object visit(ASTidentifier node, Object data) {
+   public Object visit(ASTlhs_identifier node, Object data) {
+      System.out.print(node.value);
+      return data;
+   }
+
+   public Object visit(ASTrhs_identifier node, Object data) {
       System.out.print(node.value);
       return data;
    }

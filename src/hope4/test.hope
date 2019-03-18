@@ -1,8 +1,10 @@
-int a = 1;
-int b = 2;
-if (b > a) {
-   b = b - a;
+int a;
+int b;
+a = 1;
+b = 2;
+if (b < a) {
+   print(b);
 }
 else {
-   b = b + a;
+   print(a);
 }

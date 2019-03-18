@@ -102,7 +102,28 @@ public class SemanticVisitor implements HOPE4Visitor {
       return node.childrenAccept(this, data);
    }
 
-   public Object visit (ASTidentifier node, Object data) {
+   public Object visit (ASTlhs_identifier node, Object data) {
+      SimpleNode parent = (SimpleNode) node.jjtGetParent();
+      String type = parent.toString();
+      String value = (String) node.value;
+
+      if(!type.equals("declaration")) {
+         if(st.lookup(value)) {
+            variablesRead.remove(value);
+         }
+         else {
+            declaredBeforeUse = false;
+            System.out.println("Fail: " + value + " Not Declared Before Use!");
+         }
+      }
+      else {
+         variablesWritten.remove(value);
+      }
+
+      return DataType.Integer;
+   }
+
+   public Object visit (ASTrhs_identifier node, Object data) {
       SimpleNode parent = (SimpleNode) node.jjtGetParent();
       String type = parent.toString();
       String value = (String) node.value;
