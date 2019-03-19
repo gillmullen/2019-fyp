@@ -37,6 +37,19 @@ public class SymbolTable {
       return st.get(id);
    }
 
+   public String getSymbol(String id) {
+      String type = st.get(id);
+      if(type.equals("int")){
+         return "i32";
+      }
+      else if(type.equals("String")) {
+         return "i8*";
+      }
+      else {
+         return "i1";
+      }
+   }
+
    public LinkedList<String> getVariables() { // get all variables and constants
       Object[] obArr = st.keySet().toArray();
       String[] list = Arrays.asList(obArr).toArray(new String[obArr.length]);

@@ -6,7 +6,7 @@ public interface HOPE5TreeConstants
   public int JJTSTATEMENT = 2;
   public int JJTEXPRESSION = 3;
   public int JJTCONDITION = 4;
-  public int JJTFRAGMENT = 5;
+  public int JJTVOID = 5;
   public int JJTINTEGER = 6;
   public int JJTSTRING = 7;
   public int JJTBOOL = 8;
@@ -15,11 +15,12 @@ public interface HOPE5TreeConstants
   public int JJTPRINT = 11;
   public int JJTIF_STATEMENT = 12;
   public int JJTWHILE_LOOP = 13;
-  public int JJTIDENTIFIER = 14;
-  public int JJTTYPE = 15;
-  public int JJTBINARY_ARITH_OP = 16;
-  public int JJTBINARY_LOGIC_OP = 17;
-  public int JJTCOMP_OP = 18;
+  public int JJTLHS_IDENTIFIER = 14;
+  public int JJTRHS_IDENTIFIER = 15;
+  public int JJTTYPE = 16;
+  public int JJTBINARY_ARITH_OP = 17;
+  public int JJTBINARY_LOGIC_OP = 18;
+  public int JJTCOMP_OP = 19;
 
 
   public String[] jjtNodeName = {
@@ -28,7 +29,7 @@ public interface HOPE5TreeConstants
     "statement",
     "expression",
     "condition",
-    "fragment",
+    "void",
     "integer",
     "string",
     "bool",
@@ -37,11 +38,12 @@ public interface HOPE5TreeConstants
     "print",
     "if_statement",
     "while_loop",
-    "identifier",
+    "lhs_identifier",
+    "rhs_identifier",
     "type",
     "binary_arith_op",
     "binary_logic_op",
     "comp_op",
   };
 }
-/* JavaCC - OriginalChecksum=dce2fba7dbfb443c0ac88d26355ca298 (do not edit this line) */
+/* JavaCC - OriginalChecksum=bb6448aa0d1f7284b60f9be1d9a85546 (do not edit this line) */
