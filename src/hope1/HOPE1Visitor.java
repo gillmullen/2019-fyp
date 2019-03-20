@@ -6,7 +6,7 @@ public interface HOPE1Visitor
   public Object visit(ASTstatement_block node, Object data);
   public Object visit(ASTstatement node, Object data);
   public Object visit(ASTexpression node, Object data);
-  public Object visit(ASTfragment node, Object data);
+  public Object visit(ASTinteger node, Object data);
   public Object visit(ASTbinary_arith_op node, Object data);
 }
-/* JavaCC - OriginalChecksum=6ace362057f28f1219bb727895ac5668 (do not edit this line) */
+/* JavaCC - OriginalChecksum=24e01a6e0b8568ba59fe377da8796c37 (do not edit this line) */

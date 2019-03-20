@@ -41,9 +41,8 @@ public class HOPE1/*@bgen(jjtree)*/implements HOPE1TreeConstants, HOPE1Constants
          System.out.println("Program:");
          PrintVisitor pv = new PrintVisitor();
          root.jjtAccept(pv, "");
-         System.out.println("\u005cn");
 
-         System.out.println("Writing LLVM code to: " + irFileName);
+         System.out.println("\u005cnWriting LLVM code to: " + irFileName);
 
          try {
             BufferedWriter buffer = new BufferedWriter(new FileWriter(irFileName));
@@ -210,10 +209,10 @@ public class HOPE1/*@bgen(jjtree)*/implements HOPE1TreeConstants, HOPE1Constants
   }
 
   static final public void fragment() throws ParseException {
-                   /*@bgen(jjtree) fragment */
-                    ASTfragment jjtn000 = new ASTfragment(JJTFRAGMENT);
-                    boolean jjtc000 = true;
-                    jjtree.openNodeScope(jjtn000);Token t;
+                            /*@bgen(jjtree) integer */
+                             ASTinteger jjtn000 = new ASTinteger(JJTINTEGER);
+                             boolean jjtc000 = true;
+                             jjtree.openNodeScope(jjtn000);Token t;
     try {
       t = jj_consume_token(NUM);
                    jjtree.closeNodeScope(jjtn000, true);

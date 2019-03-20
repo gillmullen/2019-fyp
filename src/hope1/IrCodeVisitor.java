@@ -65,7 +65,7 @@ public class IrCodeVisitor implements HOPE1Visitor {
    public Object visit(ASTstatement node, Object data) {
       BufferedWriter buffer = (BufferedWriter) data;
       try {
-         String result = (String) node.jjtGetChild(0).jjtAccept(this, data);
+         String result = (String) node.jjtGetChild(0).jjtAccept(this, data); // expression
          buffer.write("call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i32 0, i32 0), i32 ");
          buffer.write(result);
          buffer.write(")");
@@ -84,20 +84,21 @@ public class IrCodeVisitor implements HOPE1Visitor {
       String result;
 
       if (node.jjtGetNumChildren() == 1) {
-         result = (String) node.jjtGetChild(0).jjtAccept(this, data);
+         result = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
       }
       else {
          result = getTmp();
-         String arg1 = (String) node.jjtGetChild(0).jjtAccept(this, data);
-         String arg2 = (String) node.jjtGetChild(2).jjtAccept(this, data);
+         String arg1 = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
+         String op = (String) node.jjtGetChild(1).jjtAccept(this, data); // binary_arith_op
+         String arg2 = (String) node.jjtGetChild(2).jjtAccept(this, data); // fragment
 
-         if ((String) node.jjtGetChild(1).jjtAccept(this, data) == "+") {
+         if (op.equals("+")) {
             command = result + " = add i32 " + arg1 + ", " + arg2;
          }
-         else if ((String) node.jjtGetChild(1).jjtAccept(this, data) == "-") {
+         else if (op.equals("-")) {
             command = result + " = sub i32 " + arg1 + ", " + arg2;
          }
-         else if ((String) node.jjtGetChild(1).jjtAccept(this, data) == "*") {
+         else if (op.equals("*")) {
             command = result + " = mul i32 " + arg1 + ", " + arg2;
          }
          else {
@@ -116,7 +117,7 @@ public class IrCodeVisitor implements HOPE1Visitor {
       return result;
    }
 
-   public Object visit(ASTfragment node, Object data) {
+   public Object visit(ASTinteger node, Object data) {
       return node.value;
    }
 

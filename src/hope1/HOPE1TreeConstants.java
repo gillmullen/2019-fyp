@@ -6,7 +6,7 @@ public interface HOPE1TreeConstants
   public int JJTSTATEMENT = 2;
   public int JJTVOID = 3;
   public int JJTEXPRESSION = 4;
-  public int JJTFRAGMENT = 5;
+  public int JJTINTEGER = 5;
   public int JJTBINARY_ARITH_OP = 6;
 
 
@@ -16,8 +16,8 @@ public interface HOPE1TreeConstants
     "statement",
     "void",
     "expression",
-    "fragment",
+    "integer",
     "binary_arith_op",
   };
 }
-/* JavaCC - OriginalChecksum=93c66a6eec92fb3a9fc02e6a3a479bee (do not edit this line) */
+/* JavaCC - OriginalChecksum=aefa2f96c9c4ad11d88ba8e9114be0f0 (do not edit this line) */

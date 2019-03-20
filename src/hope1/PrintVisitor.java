@@ -22,7 +22,7 @@ public class PrintVisitor implements HOPE1Visitor {
    public Object visit (ASTstatement node, Object data) {
       System.out.print("print (");
       node.jjtGetChild(0).jjtAccept(this, data); // expression
-      System.out.println(")");
+      System.out.println(") ;");
       return data;
    }
 
@@ -40,7 +40,7 @@ public class PrintVisitor implements HOPE1Visitor {
       return data;
    }
 
-   public Object visit (ASTfragment node, Object data) {
+   public Object visit (ASTinteger node, Object data) {
       System.out.print (node.value);
       return data;
    }

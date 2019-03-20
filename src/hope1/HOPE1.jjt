@@ -50,9 +50,8 @@ public class HOPE1 {
          System.out.println("Program:");
          PrintVisitor pv = new PrintVisitor();
          root.jjtAccept(pv, "");
-         System.out.println("\n");
 
-         System.out.println("Writing LLVM code to: " + irFileName);
+         System.out.println("\nWriting LLVM code to: " + irFileName);
 
          try {
             BufferedWriter buffer = new BufferedWriter(new FileWriter(irFileName));
@@ -150,7 +149,7 @@ void expression() #void : {}
    fragment() (binary_arith_op() fragment() #expression(3))*
 }
 
-void fragment() : { Token t; }
+void fragment() #integer : { Token t; }
 {
    ( t = <NUM> ) { jjtThis.value = t.image; }
 }
