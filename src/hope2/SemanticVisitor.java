@@ -47,19 +47,19 @@ public class SemanticVisitor implements HOPE2Visitor {
    }
 
    public Object visit (ASTstatement_block node, Object data) {
-      return node.childrenAccept(this, data);
+      return node.childrenAccept(this, data); // statement and statement_block or none
    }
 
    public Object visit (ASTstatement node, Object data) {
-      return (node.jjtGetChild(0).jjtAccept(this, data));
+      return node.jjtGetChild(0).jjtAccept(this, data); // print or assignment or declaration
    }
 
    public Object visit (ASTexpression node, Object data) {
-      return node.childrenAccept(this, data);
+      return node.childrenAccept(this, data); // fragment (and op and fragment)
    }
 
    public Object visit (ASTfragment node, Object data) {
-      return (node.jjtGetChild(0).jjtAccept(this, data));
+      return node.jjtGetChild(0).jjtAccept(this, data); // integer or identifier
    }
 
    public Object visit (ASTinteger node, Object data) {
@@ -67,15 +67,15 @@ public class SemanticVisitor implements HOPE2Visitor {
    }
 
    public Object visit (ASTassignment node, Object data) {
-      return node.childrenAccept(this, data);
+      return node.childrenAccept(this, data); // identifier and expression
    }
 
    public Object visit (ASTdeclaration node, Object data) {
-      return node.childrenAccept(this, data);
+      return node.childrenAccept(this, data); // type and identifier
    }
 
    public Object visit (ASTprint node, Object data) {
-      return node.jjtGetChild(0).jjtAccept(this, data);
+      return node.jjtGetChild(0).jjtAccept(this, data); // expression
    }
 
    public Object visit (ASTlhs_identifier node, Object data) {
@@ -84,7 +84,7 @@ public class SemanticVisitor implements HOPE2Visitor {
       String value = (String) node.jjtGetValue();
 
       if(type != "declaration") {
-         if(st.lookup(value)) {
+         if(st.lookup(value)) { // if already declared
             variablesRead.remove(value);
          }
          else {

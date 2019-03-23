@@ -40,7 +40,7 @@ public class PrintVisitor implements HOPE2Visitor {
    }
 
    public Object visit (ASTfragment node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // integer or identifier
       return data;
    }
 
@@ -51,6 +51,7 @@ public class PrintVisitor implements HOPE2Visitor {
 
    public Object visit (ASTassignment node, Object data) {
       node.jjtGetChild(0).jjtAccept(this, data); // identifier
+      System.out.print(" = ");
       node.jjtGetChild(1).jjtAccept(this, data); // expression
       return data;
    }

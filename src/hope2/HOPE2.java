@@ -39,18 +39,18 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
          System.out.println("Abstract Syntax Tree:");
          root.dump(">");
 
-         // System.out.println("\nProgram:");
-         // PrintVisitor pv = new PrintVisitor();
-         // root.jjtAccept(pv, "");
-         //
-         // System.out.println("\nSymbol Table:");
-         // st.print();
-         //
-         // System.out.println("\nSemantic Analysis:");
-         // SemanticVisitor sv = new SemanticVisitor();
-         // root.jjtAccept(sv, st);
+         System.out.println("\u005cnProgram:");
+         PrintVisitor pv = new PrintVisitor();
+         root.jjtAccept(pv, "");
 
-         System.out.println("Writing LLVM code to: " + irFileName);
+         System.out.println("\u005cnSymbol Table:");
+         st.print();
+
+         System.out.println("\u005cnSemantic Analysis:");
+         SemanticVisitor sv = new SemanticVisitor();
+         root.jjtAccept(sv, st);
+
+         System.out.println("\u005cnWriting LLVM code to: " + irFileName);
 
          try {
             Context c = new Context(new BufferedWriter(new FileWriter(irFileName)));
@@ -114,13 +114,12 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
       case INT:
       case ID:
         statement();
-        jj_consume_token(SEMIC);
         statement_block();
         break;
       default:
         jj_la1[0] = jj_gen;
-                                             jjtree.closeNodeScope(jjtn000, true);
-                                             jjtc000 = false;
+                                     jjtree.closeNodeScope(jjtn000, true);
+                                     jjtc000 = false;
 
       }
     } catch (Throwable jjte000) {
@@ -270,6 +269,7 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
       lhs_identifier();
       jj_consume_token(EQUALS);
       expression();
+      jj_consume_token(SEMIC);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -299,9 +299,10 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
     try {
       type();
       id = lhs_identifier();
-                                  jjtree.closeNodeScope(jjtn000, true);
-                                  jjtc000 = false;
-                                  st.insert(id);
+      jj_consume_token(SEMIC);
+                                          jjtree.closeNodeScope(jjtn000, true);
+                                          jjtc000 = false;
+                                          st.insert(id);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -333,6 +334,7 @@ public class HOPE2/*@bgen(jjtree)*/implements HOPE2TreeConstants, HOPE2Constants
       jj_consume_token(LBR);
       expression();
       jj_consume_token(RBR);
+      jj_consume_token(SEMIC);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);

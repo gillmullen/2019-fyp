@@ -48,18 +48,18 @@ public class HOPE2 {
          System.out.println("Abstract Syntax Tree:");
          root.dump(">");
 
-         // System.out.println("\nProgram:");
-         // PrintVisitor pv = new PrintVisitor();
-         // root.jjtAccept(pv, "");
-         //
-         // System.out.println("\nSymbol Table:");
-         // st.print();
-         //
-         // System.out.println("\nSemantic Analysis:");
-         // SemanticVisitor sv = new SemanticVisitor();
-         // root.jjtAccept(sv, st);
+         System.out.println("\nProgram:");
+         PrintVisitor pv = new PrintVisitor();
+         root.jjtAccept(pv, "");
 
-         System.out.println("Writing LLVM code to: " + irFileName);
+         System.out.println("\nSymbol Table:");
+         st.print();
+
+         System.out.println("\nSemantic Analysis:");
+         SemanticVisitor sv = new SemanticVisitor();
+         root.jjtAccept(sv, st);
+
+         System.out.println("\nWriting LLVM code to: " + irFileName);
 
          try {
             Context c = new Context(new BufferedWriter(new FileWriter(irFileName)));
@@ -148,7 +148,7 @@ SimpleNode program() : {}
 
 void statement_block() : {}
 {
-   statement() <SEMIC> statement_block() | {}
+   statement() statement_block() | {}
 }
 
 void statement() : {}
@@ -175,17 +175,17 @@ void integer() : { Token t; }
 
 void assignment() : {}
 {
-   lhs_identifier() <EQUALS> expression()
+   lhs_identifier() <EQUALS> expression() <SEMIC>
 }
 
 void declaration() : { String id; }
 {
-   type() id = lhs_identifier() { st.insert(id); }
+   type() id = lhs_identifier() <SEMIC> { st.insert(id); }
 }
 
 void print() : {}
 {
-   <PRINT> <LBR> expression() <RBR>
+   <PRINT> <LBR> expression() <RBR> <SEMIC>
 }
 
 String lhs_identifier() : { Token t; }

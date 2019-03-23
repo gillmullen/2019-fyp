@@ -6,13 +6,13 @@ public class IrCodeVisitor implements HOPE2Visitor {
    private int tmpCounter = 1;
    private SymbolTable symbolTable = new SymbolTable();
 
-   private String getTmp() {
+   private String getTmp() { // makes labels for loading and writing varibles
       String tmp = "%.t" + tmpCounter;
       tmpCounter++;
       return tmp;
    }
 
-   static void beginIr(BufferedWriter buffer) {
+   static void beginIr(BufferedWriter buffer) { // declares functions and starts file
       try {
          buffer.write("declare i32 @printf(i8*, ...) #1");
          buffer.newLine();
@@ -30,7 +30,7 @@ public class IrCodeVisitor implements HOPE2Visitor {
       return;
    }
 
-   static void endIr(BufferedWriter buffer) {
+   static void endIr(BufferedWriter buffer) { // final return statement of file
       try {
          buffer.write("ret i32 0");
          buffer.newLine();
@@ -52,7 +52,7 @@ public class IrCodeVisitor implements HOPE2Visitor {
       BufferedWriter buffer = context.buffer;
 
       beginIr(buffer);
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // statement_block
       endIr(buffer);
       return data;
    }
@@ -66,20 +66,7 @@ public class IrCodeVisitor implements HOPE2Visitor {
    }
 
    public Object visit(ASTstatement node, Object data) {
-      // Context context = (Context) data;
-      // BufferedWriter buffer = context.buffer;
-      // try {
-      //    String result = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      //    buffer.write("call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i32 0, i32 0), i32 ");
-      //    buffer.write(result);
-      //    buffer.write(")");
-      //    buffer.newLine();
-      // }
-      // catch (IOException e) {
-      //    System.out.println("Failed to write IR code of statement to file");
-      //    e.printStackTrace(System.out);
-      // }
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // print or assignment or declaration
       return data;
    }
 
@@ -90,20 +77,21 @@ public class IrCodeVisitor implements HOPE2Visitor {
       String result;
 
       if (node.jjtGetNumChildren() == 1) {
-         result = (String) node.jjtGetChild(0).jjtAccept(this, data);
+         result = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
       }
       else {
          result = getTmp();
-         String arg1 = (String) node.jjtGetChild(0).jjtAccept(this, data);
-         String arg2 = (String) node.jjtGetChild(2).jjtAccept(this, data);
+         String arg1 = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
+         String op = (String) node.jjtGetChild(1).jjtAccept(this, data); // op
+         String arg2 = (String) node.jjtGetChild(2).jjtAccept(this, data); // fragment
 
-         if ((String) node.jjtGetChild(1).jjtAccept(this, data) == "+") {
+         if (op.equals("+")) {
             command = result + " = add i32 " + arg1 + ", " + arg2;
          }
-         else if ((String) node.jjtGetChild(1).jjtAccept(this, data) == "-") {
+         else if (op.equals("-")) {
             command = result + " = sub i32 " + arg1 + ", " + arg2;
          }
-         else if ((String) node.jjtGetChild(1).jjtAccept(this, data) == "*") {
+         else if (op.equals("*")) {
             command = result + " = mul i32 " + arg1 + ", " + arg2;
          }
          else {
@@ -123,7 +111,7 @@ public class IrCodeVisitor implements HOPE2Visitor {
    }
 
    public Object visit(ASTfragment node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // integer or identifier
       return data;
    }
 
@@ -134,9 +122,9 @@ public class IrCodeVisitor implements HOPE2Visitor {
    public Object visit (ASTassignment node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
-      String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String expr = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      String type = "i32";
+      String id = (String) node.jjtGetChild(0).jjtAccept(this, data); // identifier
+      String expr = (String) node.jjtGetChild(1).jjtAccept(this, data); // expression
+      String type = "i32"; // only integers in this language
       String result = "store " + type + " " + expr + ", " + type + "* %.p." + id;
 
       try {
@@ -153,11 +141,11 @@ public class IrCodeVisitor implements HOPE2Visitor {
    public Object visit (ASTdeclaration node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
-      String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      String mty = "i32";
+      String type = (String) node.jjtGetChild(0).jjtAccept(this, data); // type
+      String id = (String) node.jjtGetChild(1).jjtAccept(this, data); //identifier
+      String mty = "i32"; // only integers in this language
       String command = "%.p." + id + " = alloca " + mty;
-      symbolTable.insert(id);
+      symbolTable.insert(id); // register variable
 
       try {
          buffer.write(command);
@@ -173,7 +161,7 @@ public class IrCodeVisitor implements HOPE2Visitor {
    public Object visit (ASTprint node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
-      String result = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String result = (String) node.jjtGetChild(0).jjtAccept(this, data); // expression
       try {
          buffer.write("call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i32 0, i32 0), i32 ");
          buffer.write(result);
@@ -195,8 +183,8 @@ public class IrCodeVisitor implements HOPE2Visitor {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
 
-      String id = (String) node.value;
-      String type = "i32";
+      String id = (String) node.value; // identifier
+      String type = "i32"; // only integers in this language
       String tmp = getTmp();
       String command = tmp + " = " + "load " + type + ", " + type + "* %.p." + id;
 
