@@ -51,7 +51,7 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         System.out.println("Writing LLVM code to: " + irFileName);
+         System.out.println("\u005cnWriting LLVM code to: " + irFileName);
 
          try {
             Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
@@ -117,13 +117,12 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
       case BOOL:
       case ID:
         statement();
-        jj_consume_token(SEMIC);
         statement_block();
         break;
       default:
         jj_la1[0] = jj_gen;
-                                             jjtree.closeNodeScope(jjtn000, true);
-                                             jjtc000 = false;
+                                     jjtree.closeNodeScope(jjtn000, true);
+                                     jjtc000 = false;
 
       }
     } catch (Throwable jjte000) {
@@ -344,6 +343,7 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
       lhs_identifier();
       jj_consume_token(EQUALS);
       expression();
+      jj_consume_token(SEMIC);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -373,9 +373,10 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
     try {
       type = type();
       id = lhs_identifier();
-                                         jjtree.closeNodeScope(jjtn000, true);
-                                         jjtc000 = false;
-                                         st.insert(id, type);
+      jj_consume_token(SEMIC);
+                                                 jjtree.closeNodeScope(jjtn000, true);
+                                                 jjtc000 = false;
+                                                 st.insert(id, type);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -407,6 +408,7 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants, HOPE3Constants
       jj_consume_token(LBR);
       expression();
       jj_consume_token(RBR);
+      jj_consume_token(SEMIC);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);

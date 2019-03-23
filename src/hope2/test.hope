@@ -1,3 +1,0 @@
-int var;
-var = 5 - 2;
-print(var + 3);

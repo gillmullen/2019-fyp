@@ -40,7 +40,7 @@ public class PrintVisitor implements HOPE3Visitor {
    }
 
    public Object visit (ASTfragment node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // identifier or int or str or bool
       return data;
    }
 

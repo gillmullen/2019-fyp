@@ -60,7 +60,7 @@ public class HOPE3 {
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         System.out.println("Writing LLVM code to: " + irFileName);
+         System.out.println("\nWriting LLVM code to: " + irFileName);
 
          try {
             Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
@@ -157,7 +157,7 @@ SimpleNode program() : {}
 
 void statement_block() : {}
 {
-   statement() <SEMIC> statement_block() | {}
+   statement() statement_block() | {}
 }
 
 void statement() : {}
@@ -194,17 +194,17 @@ void bool() : { Token t; }
 
 void assignment() : {}
 {
-   lhs_identifier() <EQUALS> expression()
+   lhs_identifier() <EQUALS> expression() <SEMIC>
 }
 
 void declaration() : { String type; String id; }
 {
-   type = type() id = lhs_identifier() { st.insert(id, type); }
+   type = type() id = lhs_identifier() <SEMIC> { st.insert(id, type); }
 }
 
 void print() : {}
 {
-   <PRINT> <LBR> expression() <RBR>
+   <PRINT> <LBR> expression() <RBR> <SEMIC>
 }
 
 String lhs_identifier() : { Token t; }

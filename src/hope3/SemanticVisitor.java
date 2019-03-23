@@ -55,19 +55,19 @@ public class SemanticVisitor implements HOPE3Visitor {
    }
 
    public Object visit (ASTstatement_block node, Object data) {
-      return node.childrenAccept(this, data);
+      return node.childrenAccept(this, data); // statement and statement_block or none
    }
 
    public Object visit (ASTstatement node, Object data) {
-      return (node.jjtGetChild(0).jjtAccept(this, data));
+      return (node.jjtGetChild(0).jjtAccept(this, data)); // print or assignment or declaration
    }
 
    public Object visit (ASTexpression node, Object data) {
-      return node.childrenAccept(this, data);
+      return node.childrenAccept(this, data); // fragment (and op and fragment)
    }
 
    public Object visit (ASTfragment node, Object data) {
-      return (node.jjtGetChild(0).jjtAccept(this, data));
+      return (node.jjtGetChild(0).jjtAccept(this, data)); // id or int or str or bool
    }
 
    public Object visit (ASTinteger node, Object data) {
@@ -83,7 +83,7 @@ public class SemanticVisitor implements HOPE3Visitor {
    }
 
    public Object visit (ASTassignment node, Object data) {
-      return node.childrenAccept(this, data);
+      return node.childrenAccept(this, data); //
    }
 
    public Object visit (ASTdeclaration node, Object data) {
@@ -99,24 +99,21 @@ public class SemanticVisitor implements HOPE3Visitor {
       String type = parent.toString();
       String value = (String) node.value;
 
-      if(!type.equals("declaration")) {
-         if(st.lookup(value)) {
-            variablesRead.remove(value);
-         }
-         else {
+      if(type.equals("assignment")) {
+         if(!st.lookup(value)) {
             declaredBeforeUse = false;
             System.out.println("Fail: " + value + " Not Declared Before Use!");
          }
-      }
-      else {
          variablesWritten.remove(value);
       }
 
-      return DataType.Integer;
+      return DataType.Id;
    }
 
    public Object visit (ASTrhs_identifier node, Object data) {
-      return DataType.Integer;
+      String value = (String) node.value;
+      variablesRead.remove(value);
+      return DataType.Id;
    }
 
    public Object visit (ASTtype node, Object data) {

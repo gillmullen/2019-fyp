@@ -26,7 +26,7 @@ public class StringVisitor implements HOPE3Visitor {
    }
 
    public Object visit(ASTprogram node, Object data) {
-      node.jjtGetChild(0).jjtAccept (this, data);
+      node.jjtGetChild(0).jjtAccept (this, data); /// statement_block
       return data;
    }
 
@@ -39,13 +39,13 @@ public class StringVisitor implements HOPE3Visitor {
    }
 
    public Object visit(ASTstatement node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // print or assignment or declaration
       return data;
    }
 
    public Object visit(ASTexpression node, Object data) {
       if(node.jjtGetNumChildren() == 1) {
-         return (String) node.jjtGetChild(0).jjtAccept(this, data);
+         return (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
       }
       else {
          return "";
@@ -70,18 +70,17 @@ public class StringVisitor implements HOPE3Visitor {
       BufferedWriter buffer = context.buffer;
       ArrayList<DeclaredStrings> strings = context.strings;
 
-      String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String id = (String) node.jjtGetChild(0).jjtAccept(this, data); // identifier
       String type = symbolTable.getSymbol(id);
 
-      if(type.equals("i8*"))
-      {
+      if(type.equals("i8*")) {
          id = id + ".0";
          while(containsString(strings, id)) {
             offset = id.lastIndexOf(".");
             id = id.substring(0, offset + 1) +
             Integer.toString((Integer.parseInt(id.substring(offset+1,id.length())))+1,10);
          }
-         String expr = (String) node.jjtGetChild(1).jjtAccept(this, data);
+         String expr = (String) node.jjtGetChild(1).jjtAccept(this, data); // expression
          strings.add(new DeclaredStrings(id,expr));
       }
 
@@ -89,8 +88,8 @@ public class StringVisitor implements HOPE3Visitor {
    }
 
    public Object visit(ASTdeclaration node, Object data) {
-      String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      String type = (String) node.jjtGetChild(0).jjtAccept(this, data); // type
+      String id = (String) node.jjtGetChild(1).jjtAccept(this, data); // identifier
       symbolTable.insert(id, type);
       return data;
    }

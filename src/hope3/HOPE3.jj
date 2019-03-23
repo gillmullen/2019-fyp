@@ -64,7 +64,7 @@ public class HOPE3/*@bgen(jjtree)*/implements HOPE3TreeConstants/*@egen*/ {/*@bg
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         System.out.println("Writing LLVM code to: " + irFileName);
+         System.out.println("\nWriting LLVM code to: " + irFileName);
 
          try {
             Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
@@ -198,11 +198,11 @@ void statement_block() : {/*@bgen(jjtree) statement_block */
 {/*@bgen(jjtree) statement_block */
    try {
 /*@egen*/
-   statement() <SEMIC> statement_block() |/*@bgen(jjtree)*/
-                                           {
-                                             jjtree.closeNodeScope(jjtn000, true);
-                                             jjtc000 = false;
-                                           }
+   statement() statement_block() |/*@bgen(jjtree)*/
+                                   {
+                                     jjtree.closeNodeScope(jjtn000, true);
+                                     jjtc000 = false;
+                                   }
 /*@egen*/ {}/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
@@ -370,7 +370,7 @@ void assignment() : {/*@bgen(jjtree) assignment */
 {/*@bgen(jjtree) assignment */
    try {
 /*@egen*/
-   lhs_identifier() <EQUALS> expression()/*@bgen(jjtree)*/
+   lhs_identifier() <EQUALS> expression() <SEMIC>/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -401,11 +401,11 @@ void declaration() : {/*@bgen(jjtree) declaration */
 {/*@bgen(jjtree) declaration */
    try {
 /*@egen*/
-   type = type() id = lhs_identifier()/*@bgen(jjtree)*/
-                                       {
-                                         jjtree.closeNodeScope(jjtn000, true);
-                                         jjtc000 = false;
-                                       }
+   type = type() id = lhs_identifier() <SEMIC>/*@bgen(jjtree)*/
+                                               {
+                                                 jjtree.closeNodeScope(jjtn000, true);
+                                                 jjtc000 = false;
+                                               }
 /*@egen*/ { st.insert(id, type); }/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
@@ -437,7 +437,7 @@ void print() : {/*@bgen(jjtree) print */
 {/*@bgen(jjtree) print */
    try {
 /*@egen*/
-   <PRINT> <LBR> expression() <RBR>/*@bgen(jjtree)*/
+   <PRINT> <LBR> expression() <RBR> <SEMIC>/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);

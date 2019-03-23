@@ -11,7 +11,7 @@ public class IrCodeVisitor implements HOPE3Visitor {
    private SymbolTable symbolTable = new SymbolTable();
    Map<String, String> registerTypes = new HashMap<String, String>();
 
-   private String getTmp() {
+   private String getTmp() { // creates label for loading and writing
       String tmp = "%.t" + tmpCounter;
       tmpCounter++;
       return tmp;
@@ -23,7 +23,7 @@ public class IrCodeVisitor implements HOPE3Visitor {
       return ((Context)data).strings;
    }
 
-   static void beginIr(SimpleNode root, Object data) {
+   static void beginIr(SimpleNode root, Object data) { // creates start of file
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       ArrayList<DeclaredStrings> strings;
@@ -38,7 +38,6 @@ public class IrCodeVisitor implements HOPE3Visitor {
          buffer.newLine();
          buffer.write("@.1arg_str = private unnamed_addr constant [4 x i8] c\"%d\\0A\\00\", align 1");
          buffer.newLine();
-         buffer.newLine();
 
          strings = generateStrings(root, data);
          for(ListIterator li = strings.listIterator(); li.hasNext();) {
@@ -48,7 +47,8 @@ public class IrCodeVisitor implements HOPE3Visitor {
             buffer.write(command);
             buffer.newLine();
          }
-
+         
+         buffer.newLine();
          buffer.write("define i32 @main ()");
          buffer.newLine();
          buffer.write("{");
@@ -61,7 +61,7 @@ public class IrCodeVisitor implements HOPE3Visitor {
       return;
    }
 
-   static void endIr(BufferedWriter buffer) {
+   static void endIr(BufferedWriter buffer) { // creates end of file
       try {
          buffer.write("ret i32 0");
          buffer.newLine();
@@ -83,7 +83,7 @@ public class IrCodeVisitor implements HOPE3Visitor {
       BufferedWriter buffer = context.buffer;
 
       beginIr(node, data);
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // statement_block
       endIr(buffer);
       return data;
    }
@@ -97,7 +97,7 @@ public class IrCodeVisitor implements HOPE3Visitor {
    }
 
    public Object visit(ASTstatement node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // print or assignment or declaration
       return data;
    }
 
@@ -108,13 +108,13 @@ public class IrCodeVisitor implements HOPE3Visitor {
       String result;
 
       if(node.jjtGetNumChildren() == 1) {
-         result = (String) node.jjtGetChild(0).jjtAccept(this, data);
+         result = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
       }
       else {
          result = getTmp();
-         String arg1 = (String) node.jjtGetChild(0).jjtAccept(this, data);
-         String arg2 = (String) node.jjtGetChild(2).jjtAccept(this, data);
-         String op = (String) node.jjtGetChild(1).jjtAccept(this, data);
+         String arg1 = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
+         String arg2 = (String) node.jjtGetChild(2).jjtAccept(this, data); // fragment
+         String op = (String) node.jjtGetChild(1).jjtAccept(this, data); // op
 
          if(op.equals("+")) {
             registerTypes.put(result, "i32");
@@ -154,7 +154,7 @@ public class IrCodeVisitor implements HOPE3Visitor {
    }
 
    public Object visit(ASTfragment node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
+      node.jjtGetChild(0).jjtAccept(this, data); // id or int or str or bool
       return data;
    }
 
@@ -173,8 +173,8 @@ public class IrCodeVisitor implements HOPE3Visitor {
    public Object visit (ASTassignment node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
-      String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String expr = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      String id = (String) node.jjtGetChild(0).jjtAccept(this, data); // identifier
+      String expr = (String) node.jjtGetChild(1).jjtAccept(this, data); // expression
       String type = symbolTable.getSymbol(id);
       String result = "store " + type + " " + expr + ", " + type + "* %.p." + id;
       String tmp, var, command;
@@ -216,8 +216,8 @@ public class IrCodeVisitor implements HOPE3Visitor {
    public Object visit (ASTdeclaration node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
-      String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      String type = (String) node.jjtGetChild(0).jjtAccept(this, data); // type
+      String id = (String) node.jjtGetChild(1).jjtAccept(this, data); // identifier
       symbolTable.insert(id, type);
 
       String mty;
@@ -250,7 +250,7 @@ public class IrCodeVisitor implements HOPE3Visitor {
       String var, command, tmp;
       int length;
 
-      String result = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String result = (String) node.jjtGetChild(0).jjtAccept(this, data); // expression
       if(result.charAt(0) == '"') {
          ListIterator li = context.strings.listIterator();
          var = "";
