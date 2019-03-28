@@ -44,5 +44,5 @@ Multiple attempts of reinstalling LLVM has been unsuccessful, owing mainly to my
 ## My Seventh Blog Entry
 
 19/03/19
-Instaling LLVM on a Linux VM was successful. After this, IR up to the fifth sub-language was completed, as well as syntax and semantics. Schedule-wise, the project is right on track.
-For the next week, my goal is finish the sixth sub-langauge, and do the syntax and semantics for the seventh. As well as this, I will catch up on testing. I will also be cleaning up and commenting on parts of the code. My goal for the rest of the month is to completely finish the language. Then, at the start of April, I will write user manuals and conduct user testing.
+Installing LLVM on a Linux VM was successful. After this, IR up to the fifth sub-language was completed, as well as syntax and semantics. Schedule-wise, the project is right on track.
+For the next week, my goal is finish the sixth sub-language, and do the syntax and semantics for the seventh. As well as this, I will catch up on testing. I will also be cleaning up and commenting on parts of the code. My goal for the rest of the month is to completely finish the language. Then, at the start of April, I will write user manuals and conduct user testing.

@@ -4,8 +4,11 @@ public enum DataType {
    Integer,
    String,
    Boolean,
+   IntArr,
+   StrArr,
    ArithOp,
    LogicOp,
    CompOp,
+   ID,
    TypeUnknown
 }

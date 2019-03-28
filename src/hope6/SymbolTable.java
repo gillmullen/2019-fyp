@@ -4,10 +4,12 @@ public class SymbolTable {
 
    private Hashtable<String, String> st;
    private Hashtable<String, String> types;
+   private Hashtable<String, String> arr;
 
    public SymbolTable() { // constructor
       st = new Hashtable<>();
       types = new Hashtable<>();
+      arr = new Hashtable<>();
    }
 
    public void insert(String id, String type) { // inserts new identifier and its type into symbol table
@@ -19,6 +21,10 @@ public class SymbolTable {
          return true;
       }
       return false;
+   }
+
+   public void insertArray(String id, String size) { // records size of new arrays
+      arr.put(id, size);
    }
 
    public void print() { // prints out symbol table

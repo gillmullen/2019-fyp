@@ -86,12 +86,24 @@ public class SemanticVisitor implements HOPE6Visitor {
       return DataType.Boolean;
    }
 
+   public Object visit (ASTarray node, Object data) {
+      return node.childrenAccept(this, data);
+   }
+
    public Object visit (ASTassignment node, Object data) {
       return node.childrenAccept(this, data);
    }
 
-   public Object visit (ASTdeclaration node, Object data) {
+   public Object visit (ASTvalue_declaration node, Object data) {
       return node.childrenAccept(this, data);
+   }
+
+   public Object visit (ASTarray_declaration node, Object data) {
+      return node.childrenAccept(this, data);
+   }
+
+   public Object visit (ASTarray_size node, Object data) {
+      return DataType.Integer;
    }
 
    public Object visit (ASTprint node, Object data) {
@@ -106,16 +118,13 @@ public class SemanticVisitor implements HOPE6Visitor {
       return node.childrenAccept(this, data);
    }
 
-   public Object visit (ASTarray node, Object data) {
-      return node.childrenAccept(this, data);
-   }
-
-   public Object visit (ASTidentifier node, Object data) {
+   public Object visit (ASTlhs_identifier node, Object data) {
       SimpleNode parent = (SimpleNode) node.jjtGetParent();
       String type = parent.toString();
       String value = (String) node.value;
 
       if(!type.equals("declaration")) {
+         variablesWritten.remove(value);
          if(st.lookup(value)) {
             variablesRead.remove(value);
          }
@@ -124,11 +133,12 @@ public class SemanticVisitor implements HOPE6Visitor {
             System.out.println("Fail: " + value + " Not Declared Before Use!");
          }
       }
-      else {
-         variablesWritten.remove(value);
-      }
 
-      return DataType.Integer;
+      return DataType.ID;
+   }
+
+   public Object visit (ASTrhs_identifier node, Object data) {
+      return DataType.ID;
    }
 
    public Object visit (ASTtype node, Object data) {
@@ -141,6 +151,17 @@ public class SemanticVisitor implements HOPE6Visitor {
       }
       else if(type.equals("string")) {
          return DataType.String;
+      }
+      return DataType.TypeUnknown;
+   }
+
+   public Object visit (ASTarray_type node, Object data) {
+      String type = (String) node.value;
+      if(type.equals("int[")) {
+         return DataType.IntArr;
+      }
+      else if(type.equals("string[")) {
+         return DataType.StrArr;
       }
       return DataType.TypeUnknown;
    }

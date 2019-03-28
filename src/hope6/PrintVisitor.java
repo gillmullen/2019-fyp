@@ -72,20 +72,44 @@ public class PrintVisitor implements HOPE6Visitor {
       return data;
    }
 
-   public Object visit(ASTassignment node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data); // identifier
-      node.jjtGetChild(1).jjtAccept(this, data); // expression
-      System.out.print(" ;");
+   public Object visit(ASTarray node, Object data) {
+      System.out.print("[ ");
+      node.jjtGetChild(0).jjtAccept(this, data); // fragment
+      if(node.jjtGetNumChildren() != 1) {
+         System.out.print(" , ");
+         node.jjtGetChild(1).jjtAccept(this, data); // fragment
+      }
+      System.out.print(" ]");
       return data;
    }
 
-   public Object visit(ASTdeclaration node, Object data) {
+   public Object visit(ASTassignment node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data); // identifier
+      System.out.print(" = ");
+      node.jjtGetChild(1).jjtAccept(this, data); // expression
+      System.out.println(" ;");
+      return data;
+   }
+
+   public Object visit(ASTvalue_declaration node, Object data) {
       node.jjtGetChild(0).jjtAccept(this, data); // type
       System.out.print(" ");
       node.jjtGetChild(1).jjtAccept(this, data); // identifier
-      System.out.print(" = ");
-      node.jjtGetChild(2).jjtAccept(this, data); // expression
       System.out.println(" ;");
+      return data;
+   }
+
+   public Object visit(ASTarray_declaration node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data); // type
+      node.jjtGetChild(1).jjtAccept(this, data); //size
+      System.out.print("] ");
+      node.jjtGetChild(2).jjtAccept(this, data); // identifier
+      System.out.println(" ;");
+      return data;
+   }
+
+   public Object visit(ASTarray_size node, Object data) {
+      System.out.print(node.value);
       return data;
    }
 
@@ -117,23 +141,22 @@ public class PrintVisitor implements HOPE6Visitor {
       return data;
    }
 
-   public Object visit(ASTarray node, Object data) {
-      System.out.print("[ ");
-      node.jjtGetChild(0).jjtAccept(this, data); // fragment
-      if(node.jjtGetNumChildren() > 1) {
-         System.out.print(" , ");
-         node.jjtGetChild(1).jjtAccept(this, data); // fragment
-      }
-      System.out.print(" ]");
+   public Object visit(ASTlhs_identifier node, Object data) {
+      System.out.print(node.value);
       return data;
    }
 
-   public Object visit(ASTidentifier node, Object data) {
+   public Object visit(ASTrhs_identifier node, Object data) {
       System.out.print(node.value);
       return data;
    }
 
    public Object visit(ASTtype node, Object data) {
+      System.out.print(node.value);
+      return data;
+   }
+
+   public Object visit(ASTarray_type node, Object data) {
       System.out.print(node.value);
       return data;
    }

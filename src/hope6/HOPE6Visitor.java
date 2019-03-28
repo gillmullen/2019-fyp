@@ -10,16 +10,20 @@ public interface HOPE6Visitor
   public Object visit(ASTinteger node, Object data);
   public Object visit(ASTstring node, Object data);
   public Object visit(ASTbool node, Object data);
+  public Object visit(ASTarray node, Object data);
   public Object visit(ASTassignment node, Object data);
-  public Object visit(ASTdeclaration node, Object data);
+  public Object visit(ASTvalue_declaration node, Object data);
+  public Object visit(ASTarray_declaration node, Object data);
+  public Object visit(ASTarray_size node, Object data);
   public Object visit(ASTprint node, Object data);
   public Object visit(ASTif_statement node, Object data);
   public Object visit(ASTwhile_loop node, Object data);
-  public Object visit(ASTarray node, Object data);
-  public Object visit(ASTidentifier node, Object data);
+  public Object visit(ASTlhs_identifier node, Object data);
+  public Object visit(ASTrhs_identifier node, Object data);
   public Object visit(ASTtype node, Object data);
+  public Object visit(ASTarray_type node, Object data);
   public Object visit(ASTbinary_arith_op node, Object data);
   public Object visit(ASTbinary_logic_op node, Object data);
   public Object visit(ASTcomp_op node, Object data);
 }
-/* JavaCC - OriginalChecksum=6fbee0e72c4b1866e9be5f92538d6898 (do not edit this line) */
+/* JavaCC - OriginalChecksum=90336791c1a6d20ba1f5aea5cad4008c (do not edit this line) */

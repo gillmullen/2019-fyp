@@ -10,17 +10,21 @@ public interface HOPE6TreeConstants
   public int JJTINTEGER = 6;
   public int JJTSTRING = 7;
   public int JJTBOOL = 8;
-  public int JJTASSIGNMENT = 9;
-  public int JJTDECLARATION = 10;
-  public int JJTPRINT = 11;
-  public int JJTIF_STATEMENT = 12;
-  public int JJTWHILE_LOOP = 13;
-  public int JJTARRAY = 14;
-  public int JJTIDENTIFIER = 15;
-  public int JJTTYPE = 16;
-  public int JJTBINARY_ARITH_OP = 17;
-  public int JJTBINARY_LOGIC_OP = 18;
-  public int JJTCOMP_OP = 19;
+  public int JJTARRAY = 9;
+  public int JJTASSIGNMENT = 10;
+  public int JJTVALUE_DECLARATION = 11;
+  public int JJTARRAY_DECLARATION = 12;
+  public int JJTARRAY_SIZE = 13;
+  public int JJTPRINT = 14;
+  public int JJTIF_STATEMENT = 15;
+  public int JJTWHILE_LOOP = 16;
+  public int JJTLHS_IDENTIFIER = 17;
+  public int JJTRHS_IDENTIFIER = 18;
+  public int JJTTYPE = 19;
+  public int JJTARRAY_TYPE = 20;
+  public int JJTBINARY_ARITH_OP = 21;
+  public int JJTBINARY_LOGIC_OP = 22;
+  public int JJTCOMP_OP = 23;
 
 
   public String[] jjtNodeName = {
@@ -33,17 +37,21 @@ public interface HOPE6TreeConstants
     "integer",
     "string",
     "bool",
+    "array",
     "assignment",
-    "declaration",
+    "value_declaration",
+    "array_declaration",
+    "array_size",
     "print",
     "if_statement",
     "while_loop",
-    "array",
-    "identifier",
+    "lhs_identifier",
+    "rhs_identifier",
     "type",
+    "array_type",
     "binary_arith_op",
     "binary_logic_op",
     "comp_op",
   };
 }
-/* JavaCC - OriginalChecksum=5d5b03974c5985a1211ab470cd05f3c0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=0b143fec3e0c279723d6d4968584b81c (do not edit this line) */

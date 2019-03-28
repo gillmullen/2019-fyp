@@ -113,8 +113,8 @@ TOKEN [IGNORE_CASE] : /* Keywords */
     <INT : "int"> |
     <STRING : "string"> |
     <BOOL : "boolean"> |
-    <INTARRAY : "int[]"> |
-    <STRARRAY : "string[]"> |
+    <INTARRAY : "int["> |
+    <STRARRAY : "string["> |
     <TRUE : "true"> |
     <FALSE : "false"> |
     <IF : "if"> |
@@ -179,7 +179,8 @@ void statement() : {}
 {
    print() |
    assignment() |
-   declaration() |
+   value_declaration() |
+   array_declaration() |
    if_statement() |
    while_loop()
 }
@@ -196,7 +197,7 @@ void condition() : {}
 
 void fragment() #void : {}
 {
-   integer() | string() | bool() | identifier() | array()
+   integer() | string() | bool() | rhs_identifier() | <LSB> array() <RSB>
 }
 
 void integer() : { Token t; }
@@ -214,14 +215,29 @@ void bool() : { Token t; }
    ( t = <TRUE> | t = <FALSE> ) { jjtThis.value = t.image; }
 }
 
-void assignment() : {}
+void array() : {}
 {
-   identifier() <EQUALS> expression() <SEMIC>
+   fragment() (<COMMA> fragment())*
 }
 
-void declaration() : { String type; String id; }
+void assignment() : {}
 {
-   type = type() id = identifier() <EQUALS> expression() <SEMIC> { st.insert(id, type); }
+   lhs_identifier() <EQUALS> expression() <SEMIC>
+}
+
+void value_declaration() : { String type; String id; }
+{
+   type = type() id = lhs_identifier() <SEMIC> { st.insert(id, type); }
+}
+
+void array_declaration() : { String type; String id; String size; }
+{
+   type = array_type() size = array_size() <RSB> id = lhs_identifier() <SEMIC> { st.insert(id, type + "]"); st.insertArray(id, size); }
+}
+
+String array_size() : { Token t; }
+{
+   ( t = <NUM> ) { jjtThis.value = t.image; return t.image; }
 }
 
 void print() : {}
@@ -239,19 +255,24 @@ void while_loop() : {}
    <WHILE> <LBR> condition() <RBR> <LCB> statement_block() <RCB>
 }
 
-void array() : {}
+String lhs_identifier() : { Token t; }
 {
-   <LSB> fragment() ( <COMMA> fragment() )* <RSB>
+   ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
 }
 
-String identifier() : { Token t; }
+String rhs_identifier() : { Token t; }
 {
    ( t = <ID> ) { jjtThis.value = t.image; return t.image; }
 }
 
 String type() : { Token t; }
 {
-   ( t = <INT> | t = <STRING> | t = <BOOL> | t = <INTARRAY> | t = <STRARRAY> ) { jjtThis.value = t.image; return t.image; }
+   ( t = <INT> | t = <STRING> | t = <BOOL>) { jjtThis.value = t.image; return t.image; }
+}
+
+String array_type() : { Token t; }
+{
+   ( t = <INTARRAY> | t = <STRARRAY> ) { jjtThis.value = t.image; return t.image; }
 }
 
 void binary_arith_op() : { Token t; }
