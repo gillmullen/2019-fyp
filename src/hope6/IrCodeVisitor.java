@@ -308,6 +308,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
       String size = (String) node.jjtGetChild(1).jjtAccept(this, data);
       String id = (String) node.jjtGetChild(2).jjtAccept(this, data);
       symbolTable.insert(id, type);
+      symbolTable.insertArray(id, size);
 
       String mty;
       if(type.equals("int[]")) {
