@@ -311,10 +311,10 @@ public class IrCodeVisitor implements HOPE6Visitor {
 
       String mty;
       if(type.equals("int[]")) {
-         mty = "[" size + "xi32]";
+         mty = "[" + size + " x i32]";
       }
       else {
-         mty = "[" size + "xi8*]";
+         mty = "[" + size + " x i8*]";
       }
       String command = "%.p." + id + " = alloca " + mty;
 
@@ -327,6 +327,10 @@ public class IrCodeVisitor implements HOPE6Visitor {
          e.printStackTrace(System.out);
       }
       return data;
+   }
+
+   public Object visit (ASTarray_size node, Object data) {
+      return node.value;
    }
 
    public Object visit (ASTprint node, Object data) {
@@ -476,6 +480,10 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit (ASTtype node, Object data) {
+      return node.value;
+   }
+
+   public Object visit (ASTarray_type node, Object data) {
       return node.value;
    }
 

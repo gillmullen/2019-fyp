@@ -26,4 +26,4 @@ public interface HOPE6Visitor
   public Object visit(ASTbinary_logic_op node, Object data);
   public Object visit(ASTcomp_op node, Object data);
 }
-/* JavaCC - OriginalChecksum=90336791c1a6d20ba1f5aea5cad4008c (do not edit this line) */
+/* JavaCC - OriginalChecksum=2506bdfe9cb6263f06a51118a9427258 (do not edit this line) */

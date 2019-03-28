@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class HOPE6/*@bgen(jjtree)*/implements HOPE6TreeConstants, HOPE6Constants {/*@bgen(jjtree)*/
   protected static JJTHOPE6State jjtree = new JJTHOPE6State();
@@ -50,18 +51,18 @@ public class HOPE6/*@bgen(jjtree)*/implements HOPE6TreeConstants, HOPE6Constants
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         // System.out.println("Writing LLVM code to: " + irFileName);
-         //
-         // try {
-         //    Context context = new Context(new BufferedWriter(new FileWriter(irFileName)));
-         //    IrCodeVisitor irCode = new IrCodeVisitor();
-         //    root.jjtAccept(irCode, context);
-         //    context.buffer.flush();
-         // }
-         // catch (IOException e) {
-         //    System.out.println("Failed to write LLVM code to file");
-         //    e.printStackTrace(System.out);
-         // }
+         System.out.println("\u005cnWriting LLVM code to: " + irFileName);
+
+         try {
+            Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
+            IrCodeVisitor irCode = new IrCodeVisitor();
+            root.jjtAccept(irCode, context);
+            context.buffer.flush();
+         }
+         catch (IOException e) {
+            System.out.println("Failed to write LLVM code to file");
+            e.printStackTrace(System.out);
+         }
 
       }
       catch(ParseException e) {
