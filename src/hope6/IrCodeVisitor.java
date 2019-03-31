@@ -68,7 +68,9 @@ public class IrCodeVisitor implements HOPE6Visitor {
       return;
    }
 
-   static void endIr(BufferedWriter buffer) {
+   static void endIr(SimpleNode root, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
       try {
          buffer.write("ret i32 0");
          buffer.newLine();
@@ -86,12 +88,9 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTprogram node, Object data) {
-      Context context = (Context) data;
-      BufferedWriter buffer = context.buffer;
-
       beginIr(node, data);
       node.jjtGetChild(0).jjtAccept(this, data);
-      endIr(buffer);
+      endIr(node, data);
       return data;
    }
 
@@ -225,14 +224,26 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit (ASTarray node, Object data) {
-      return node.value;
+      String child1 = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String child2 = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      String arrayType = node.jjtGetChild(0).toString();
+      String mty;
+      if(arrayType.equals("integer")) {
+         mty = "i32";
+      }
+      else {
+         mty = "i8*";
+      }
+      node.value = "[" + mty + " " + child1 + ", " + mty + " " + child2 + "]";
+      return data;
    }
 
    public Object visit (ASTassignment node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String expr = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      SimpleNode exprNode = (SimpleNode) node.jjtGetChild(1);
+      String expr = (String) exprNode.value;
       String type = symbolTable.getSymbol(id);
       String result = "store " + type + " " + expr + ", " + type + "* %.p." + id;
       String tmp, var, command;

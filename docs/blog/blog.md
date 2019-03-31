@@ -46,3 +46,8 @@ Multiple attempts of reinstalling LLVM has been unsuccessful, owing mainly to my
 19/03/19
 Installing LLVM on a Linux VM was successful. After this, IR up to the fifth sub-language was completed, as well as syntax and semantics. Schedule-wise, the project is right on track.
 For the next week, my goal is finish the sixth sub-language, and do the syntax and semantics for the seventh. As well as this, I will catch up on testing. I will also be cleaning up and commenting on parts of the code. My goal for the rest of the month is to completely finish the language. Then, at the start of April, I will write user manuals and conduct user testing.
+
+## My Eighth Blog Entry
+
+29/03/19
+Progress was minimum for this sprint due to an illness. So, I am trying to finish the IR for the sixth sub-language, which is the most difficult of them all due to the fact I am implementing arrays. I am still on schedule, with 2 weeks of development left and 1 left for evaluation this semester. My goal for next week is to finish both the sixth and seventh sub-languages.

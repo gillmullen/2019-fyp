@@ -74,7 +74,7 @@ public class StringVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTarray node, Object data) {
-      return node.value;
+      return data;
    }
 
    public Object visit(ASTassignment node, Object data) {
