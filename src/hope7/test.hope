@@ -1,0 +1,15 @@
+def int add(int a, int b) {
+  a = a + b;
+  b = a + b;
+  return (b);
+}
+
+main {
+  int x;
+  int y;
+  int z;
+  x = 1;
+  y = 2;
+  z = add(x,y);
+  print(z);
+}
