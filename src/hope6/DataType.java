@@ -1,14 +1,14 @@
 public enum DataType {
    SimpleNode,
    Program,
+   Main,
+   Func,
    Integer,
    String,
    Boolean,
-   IntArr,
-   StrArr,
+   Id,
    ArithOp,
    LogicOp,
    CompOp,
-   ID,
    TypeUnknown
 }

@@ -6,14 +6,14 @@ class ASTparameter_list extends SimpleNode {
     super(id);
   }
 
-  public ASTparameter_list(HOPE7 p, int id) {
+  public ASTparameter_list(HOPE6 p, int id) {
     super(p, id);
   }
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(HOPE7Visitor visitor, Object data) {
+  public Object jjtAccept(HOPE6Visitor visitor, Object data) {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=47bd8229764fefe9c375b0eeb02c5efd (do not edit this line) */
+/* JavaCC - OriginalChecksum=0bce92172ca65d89dfba25d709b63148 (do not edit this line) */

@@ -6,14 +6,14 @@ class ASTarith_op extends SimpleNode {
     super(id);
   }
 
-  public ASTarith_op(HOPE7 p, int id) {
+  public ASTarith_op(HOPE6 p, int id) {
     super(p, id);
   }
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(HOPE7Visitor visitor, Object data) {
+  public Object jjtAccept(HOPE6Visitor visitor, Object data) {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=0d6fb388ee3b7cf89fd000cb0523d67b (do not edit this line) */
+/* JavaCC - OriginalChecksum=3ca21c23fa333700ac4de9d0f52da9d7 (do not edit this line) */

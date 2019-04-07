@@ -9,6 +9,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
 
    private int tmpCounter = 1;
    private int labelCounter = 1;
+   String scope = "global";
    private SymbolTable symbolTable = new SymbolTable();
    Map<String, String> registerTypes = new HashMap<String, String>();
 
@@ -68,9 +69,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
       return;
    }
 
-   static void endIr(SimpleNode root, Object data) {
-      Context context = (Context) data;
-      BufferedWriter buffer = context.buffer;
+   static void endIr(BufferedWriter buffer) {
       try {
          buffer.write("ret i32 0");
          buffer.newLine();
@@ -88,9 +87,120 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTprogram node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+
       beginIr(node, data);
       node.jjtGetChild(0).jjtAccept(this, data);
-      endIr(node, data);
+      endIr(buffer);
+      return data;
+   }
+
+   public Object visit(ASTmain node, Object data) {
+      scope = "main";
+      node.jjtGetChild(0).jjtAccept(this, data); // statement_block
+      return data;
+   }
+
+   public Object visit(ASTfunction_declarations node, Object data) {
+      if(node.jjtGetNumChildren() != 0) {
+         node.jjtGetChild(0).jjtAccept(this, data); // function
+         node.jjtGetChild(1).jjtAccept(this, data); // function_declarations
+      }
+      return data;
+   }
+
+   public Object visit(ASTfunction node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+
+      String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      symbolTable.insert(scope, id, type, "FUNC");
+      scope = id;
+      String paramsString = (String) node.jjtGetChild(2).jjtAccept(this, data);
+      String mty = symbolTable.getSymbol("global", id);
+      String signature = type + "(";
+      String[] params = paramsString.split(",");
+
+      int numParams;
+      if(paramsString.equals("")) {
+         numParams = 0;
+      }
+      else {
+         numParams = params.length;
+      }
+      String[] paramsId = new String[numParams];
+      String[] paramsType = new String[numParams];
+      String[] paramsMty = new String[numParams];
+
+      if(!paramsString.equals("")) {
+         for(int i = 0; i < numParams; i++) {
+            params[i] = params[i].trim();
+            String[] param = params[i].split(" ");
+            paramsType[i] = param[0];
+            paramsId[i] = param[1];
+            paramsMty[i] = symbolTable.getSymbol(id, paramsId[i]);
+            signature += paramsType[i];
+            if(i < params.length - 1) {
+               signature += ", ";
+            }
+         }
+      }
+      else {
+         signature += "void";
+      }
+      signature += ")";
+
+      String command = "define " + mty + " @" + id + "(";
+      for (int i = 0; i < numParams; i++) {
+         command += " " + paramsMty[i] + " %." + paramsId[i];
+         if(i < params.length - 1) {
+            command += ",";
+         }
+      }
+      command += ")\n{\nentry:";
+
+      try {
+         buffer.write(command);
+         buffer.newLine();
+
+         command = "%.p.return = alloca " + mty;
+         buffer.write(command);
+         buffer.newLine();
+
+         if(!paramsString.equals("")) {
+            for(int i = 0; i < params.length; i++) {
+               command = "%.p." + paramsId[i] + " = alloca " + paramsMty[i];
+               buffer.write(command);
+               buffer.newLine();
+               command = "store " + paramsMty[i] + " %." + paramsId[i] + ", " + paramsMty[i] + "* %.p." + paramsId[i];
+               buffer.write(command);
+               buffer.newLine();
+            }
+         }
+         node.jjtGetChild(3).jjtAccept(this, data); // statement_block (function body)
+
+         String t = getTmp();
+         command = t + " = add i1 0,0\nbr label %exit\n"; // add nop before exit label
+         buffer.write(command);
+         buffer.write("exit:\n");
+
+         String tmp = getTmp();
+         command = tmp + " = load " + mty + ", " + mty + "* %.p.return";
+         registerTypes.put(tmp, mty);
+         buffer.write(command);
+         command = "ret " + mty + " " + tmp;
+         buffer.write(command);
+         buffer.newLine();
+         buffer.write("}\n");
+         buffer.newLine();
+
+      }
+      catch (IOException e) {
+         System.out.println("Failed to write IR code for function to file");
+         e.printStackTrace(System.out);
+      }
       return data;
    }
 
@@ -108,53 +218,13 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTexpression node, Object data) {
-      Context context = (Context) data;
-      BufferedWriter buffer = context.buffer;
-      String command = "";
       String result;
-
       if(node.jjtGetNumChildren() == 1) {
-         result = (String) node.jjtGetChild(0).jjtAccept(this, data);
+         result = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment or function_call
       }
       else {
-         result = getTmp();
-         String arg1 = (String) node.jjtGetChild(0).jjtAccept(this, data);
-         String arg2 = (String) node.jjtGetChild(2).jjtAccept(this, data);
-         String op = (String) node.jjtGetChild(1).jjtAccept(this, data);
-
-         if(op.equals("+")) {
-            registerTypes.put(result, "i32");
-            command = result + " = add i32 " + arg1 + ", " + arg2;
-         }
-         else if(op.equals("-")) {
-            registerTypes.put(result, "i32");
-            command = result + " = sub i32 " + arg1 + ", " + arg2;
-         }
-         else if(op.equals("*")) {
-            registerTypes.put(result, "i32");
-            command = result + " = mul i32 " + arg1 + ", " + arg2;
-         }
-         else if(op.equals("/")) {
-            registerTypes.put(result, "i32");
-            command = result + " = sdiv i32 " + arg1 + ", " + arg2;
-         }
-         else if(op.equals("&")) {
-            registerTypes.put(result, "i1");
-            command = result + " = and i1 " + arg1 + ", " + arg2;
-         }
-         else {
-            registerTypes.put(result, "i1");
-            command = result + " = or i1 " + arg1 + ", " + arg2;
-         }
-      }
-
-      try {
-         buffer.write(command);
-         buffer.newLine();
-      }
-      catch (IOException e) {
-         System.out.println("Failed to write IR code of expression to file");
-         e.printStackTrace(System.out);
+         node.jjtGetChild(0).jjtAccept(this, data); // fragment
+         result = (String) node.jjtGetChild(1).jjtAccept(this, data); // binary op
       }
       return result;
    }
@@ -198,8 +268,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
          buffer.write(command);
          buffer.newLine();
       }
-      catch (IOException e)
-      {
+      catch (IOException e) {
          System.out.println("Failed to write IR code for condition to file");
          e.printStackTrace(System.out);
       }
@@ -209,6 +278,30 @@ public class IrCodeVisitor implements HOPE6Visitor {
    public Object visit(ASTfragment node, Object data) {
       node.jjtGetChild(0).jjtAccept(this, data);
       return data;
+   }
+
+   public Object visit(ASTfunction_call node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+      String tmp = getTmp();
+      String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String params = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      String funcType = symbolTable.getSymbol("global", id);
+      scope = id;
+
+      String command = tmp + " = call " + funcType + " @" + id + " (" + params + ")";
+      registerTypes.put(tmp, funcType);
+
+      try {
+         buffer.write(command);
+         buffer.newLine();
+      }
+      catch (IOException e) {
+         System.out.println ("Failed to write IR code for a function call to file");
+         e.printStackTrace (System.out);
+      }
+
+      return tmp;
    }
 
    public Object visit (ASTinteger node, Object data) {
@@ -223,29 +316,12 @@ public class IrCodeVisitor implements HOPE6Visitor {
       return node.value;
    }
 
-   public Object visit (ASTarray node, Object data) {
-      String child1 = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String child2 = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      String arrayType = node.jjtGetChild(0).toString();
-      String mty;
-      if(arrayType.equals("integer")) {
-         mty = "i32";
-      }
-      else {
-         mty = "i8*";
-      }
-      node.value = "[" + mty + " " + child1 + ", " + mty + " " + child2 + "]";
-      return data;
-   }
-
    public Object visit (ASTassignment node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      SimpleNode exprNode = (SimpleNode) node.jjtGetChild(1);
-      String expr = (String) exprNode.value;
-      String type = symbolTable.getSymbol(id);
-      String result = "store " + type + " " + expr + ", " + type + "* %.p." + id;
+      String expr = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      String type = symbolTable.getSymbol(scope, id);
       String tmp, var, command;
       DeclaredStrings s;
       int length;
@@ -282,12 +358,12 @@ public class IrCodeVisitor implements HOPE6Visitor {
       return data;
    }
 
-   public Object visit (ASTvalue_declaration node, Object data) {
+   public Object visit (ASTdeclaration node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      symbolTable.insert(id, type);
+      symbolTable.insert(scope, id, type, "VAR");
 
       String mty;
       if(type.equals("int")) {
@@ -310,39 +386,6 @@ public class IrCodeVisitor implements HOPE6Visitor {
          e.printStackTrace(System.out);
       }
       return data;
-   }
-
-   public Object visit (ASTarray_declaration node, Object data) {
-      Context context = (Context) data;
-      BufferedWriter buffer = context.buffer;
-      String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String size = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      String id = (String) node.jjtGetChild(2).jjtAccept(this, data);
-      symbolTable.insert(id, type);
-      symbolTable.insertArray(id, size);
-
-      String mty;
-      if(type.equals("int[]")) {
-         mty = "[" + size + " x i32]";
-      }
-      else {
-         mty = "[" + size + " x i8*]";
-      }
-      String command = "%.p." + id + " = alloca " + mty;
-
-      try {
-         buffer.write(command);
-         buffer.newLine();
-      }
-      catch (IOException e) {
-         System.out.println("Failed to write IR code of declaration to file");
-         e.printStackTrace(System.out);
-      }
-      return data;
-   }
-
-   public Object visit (ASTarray_size node, Object data) {
-      return node.value;
    }
 
    public Object visit (ASTprint node, Object data) {
@@ -471,19 +514,17 @@ public class IrCodeVisitor implements HOPE6Visitor {
       BufferedWriter buffer = context.buffer;
 
       String id = (String) node.value;
-      String type = symbolTable.getSymbol(id);
+      String type = symbolTable.getSymbol(scope, id);
       String tmp = getTmp();
       String command = tmp + " = " + "load " + type + ", " + type + "* %.p." + id;
 
       registerTypes.put(tmp,type);
 
-      try
-      {
+      try {
          buffer.write(command);
          buffer.newLine();
       }
-      catch (IOException e)
-      {
+      catch (IOException e) {
          System.out.println ("Failed to write IR code for RHS identifier to file");
          e.printStackTrace (System.out);
       }
@@ -495,15 +536,117 @@ public class IrCodeVisitor implements HOPE6Visitor {
       return node.value;
    }
 
-   public Object visit (ASTarray_type node, Object data) {
+   public Object visit(ASTparameter_list node, Object data) {
+      String params = "";
+      if(node.jjtGetNumChildren() != 0) {
+         params = (String) node.jjtGetChild(0).jjtAccept(this, data); // parameter
+         if(node.jjtGetNumChildren() != 1) {
+            params += ", " + (String) node.jjtGetChild(1).jjtAccept(this, data); // parameter_list
+         }
+      }
+      return params;
+   }
+
+   public Object visit(ASTparameter node, Object data) {
+      String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      symbolTable.insert(scope, id, type, "PARAM");
+      String finalParam = type + " " + id;
+      return finalParam;
+   }
+
+   public Object visit(ASTargument_list node, Object data) {
+      String args = "";
+      if(node.jjtGetNumChildren() != 0) {
+         args = (String) node.jjtGetChild(0).jjtAccept(this, data); // argument
+         if(node.jjtGetNumChildren() != 1) {
+            args += ", " + (String) node.jjtGetChild(1).jjtAccept(this, data); // argument_list
+         }
+      }
+      return args;
+   }
+
+   public Object visit(ASTargument node, Object data) {
       return node.value;
    }
 
    public Object visit(ASTbinary_arith_op node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+      String command = "";
+      String result;
+
+      result = getTmp();
+      SimpleNode parent = (SimpleNode) node.jjtGetParent().jjtGetChild(0);
+      String arg1 = (String) parent.value;
+      String op = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String arg2 = (String) node.jjtGetChild(1).jjtGetChild(0).jjtAccept(this, data);
+
+      if(op.equals("+")) {
+         registerTypes.put(result, "i32");
+         command = result + " = add i32 " + arg1 + ", " + arg2;
+      }
+      else if(op.equals("-")) {
+         registerTypes.put(result, "i32");
+         command = result + " = sub i32 " + arg1 + ", " + arg2;
+      }
+      else if(op.equals("*")) {
+         registerTypes.put(result, "i32");
+         command = result + " = mul i32 " + arg1 + ", " + arg2;
+      }
+      else {
+         registerTypes.put(result, "i32");
+         command = result + " = sdiv i32 " + arg1 + ", " + arg2;
+      }
+
+      try {
+         buffer.write(command);
+         buffer.newLine();
+      }
+      catch (IOException e) {
+         System.out.println("Failed to write IR code of expression to file");
+         e.printStackTrace(System.out);
+      }
+      return result;
+   }
+
+   public Object visit(ASTarith_op node, Object data) {
       return node.value;
    }
 
    public Object visit(ASTbinary_logic_op node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+      String command = "";
+      String result;
+
+      result = getTmp();
+      SimpleNode parent = (SimpleNode) node.jjtGetParent();
+      String arg1 = (String) parent.jjtGetChild(0).jjtAccept(this, data);
+      String op = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String arg2 = (String) node.jjtGetChild(1).jjtAccept(this, data);
+
+      if(op.equals("&")) {
+         registerTypes.put(result, "i1");
+         command = result + " = and i1 " + arg1 + ", " + arg2;
+      }
+      else {
+         registerTypes.put(result, "i1");
+         command = result + " = or i1 " + arg1 + ", " + arg2;
+      }
+
+      try {
+         buffer.write(command);
+         buffer.newLine();
+      }
+      catch (IOException e) {
+         System.out.println("Failed to write IR code of expression to file");
+         e.printStackTrace(System.out);
+      }
+      return result;
+   }
+
+   public Object visit(ASTlogic_op node, Object data) {
       return node.value;
    }
 

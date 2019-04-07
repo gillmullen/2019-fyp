@@ -7,7 +7,38 @@ public class PrintVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTprogram node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data); // function_declarations
+      node.jjtGetChild(1).jjtAccept(this, data); // main
+      return data;
+   }
+
+   public Object visit(ASTmain node, Object data) {
       node.jjtGetChild(0).jjtAccept(this, data); // statement_block
+      return data;
+   }
+
+   public Object visit(ASTfunction_declarations node, Object data) {
+      if (node.jjtGetNumChildren() != 0) {
+         node.jjtGetChild(0).jjtAccept(this, data); // function
+         node.jjtGetChild(1).jjtAccept(this, data); // function_declarations
+      }
+      return data;
+   }
+
+   public Object visit(ASTfunction node, Object data) {
+      System.out.print("def ");
+      node.jjtGetChild(0).jjtAccept(this, data); // type
+      System.out.print(" ");
+      node.jjtGetChild(1).jjtAccept(this, data); // identifier
+      System.out.print("( ");
+      node.jjtGetChild(2).jjtAccept(this, data); // parameter_list
+      System.out.println(" ) {");
+      node.jjtGetChild(3).jjtAccept(this, data); // statement_block
+      System.out.print("return ( ");
+      if (node.jjtGetNumChildren() == 5) {
+         node.jjtGetChild(4).jjtAccept(this, data); // fragment
+      }
+      System.out.println(" ) ;\n}\n");
       return data;
    }
 
@@ -25,16 +56,7 @@ public class PrintVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTexpression node, Object data) {
-      if (node.jjtGetNumChildren() == 1) {
-         node.jjtGetChild(0).jjtAccept(this, data); // fragment
-      }
-      else {
-         node.jjtGetChild(0).jjtAccept(this, data); // fragment
-         System.out.print(" ");
-         node.jjtGetChild(1).jjtAccept(this, data); // op
-         System.out.print(" ");
-         node.jjtGetChild(2).jjtAccept(this, data); // fragment
-      }
+      node.childrenAccept(this, data);
       return data;
    }
 
@@ -49,6 +71,14 @@ public class PrintVisitor implements HOPE6Visitor {
          System.out.print(" ");
          node.jjtGetChild(2).jjtAccept(this, data); // fragment
       }
+      return data;
+   }
+
+   public Object visit(ASTfunction_call node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data); // identifier
+      System.out.print(" ( ");
+      node.jjtGetChild(1).jjtAccept(this, data); // argument_list
+      System.out.print(" )");
       return data;
    }
 
@@ -72,17 +102,6 @@ public class PrintVisitor implements HOPE6Visitor {
       return data;
    }
 
-   public Object visit(ASTarray node, Object data) {
-      System.out.print("[ ");
-      node.jjtGetChild(0).jjtAccept(this, data); // fragment
-      if(node.jjtGetNumChildren() != 1) {
-         System.out.print(" , ");
-         node.jjtGetChild(1).jjtAccept(this, data); // fragment
-      }
-      System.out.print(" ]");
-      return data;
-   }
-
    public Object visit(ASTassignment node, Object data) {
       node.jjtGetChild(0).jjtAccept(this, data); // identifier
       System.out.print(" = ");
@@ -91,25 +110,11 @@ public class PrintVisitor implements HOPE6Visitor {
       return data;
    }
 
-   public Object visit(ASTvalue_declaration node, Object data) {
+   public Object visit(ASTdeclaration node, Object data) {
       node.jjtGetChild(0).jjtAccept(this, data); // type
       System.out.print(" ");
       node.jjtGetChild(1).jjtAccept(this, data); // identifier
       System.out.println(" ;");
-      return data;
-   }
-
-   public Object visit(ASTarray_declaration node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data); // type
-      node.jjtGetChild(1).jjtAccept(this, data); //size
-      System.out.print("] ");
-      node.jjtGetChild(2).jjtAccept(this, data); // identifier
-      System.out.println(" ;");
-      return data;
-   }
-
-   public Object visit(ASTarray_size node, Object data) {
-      System.out.print(node.value);
       return data;
    }
 
@@ -156,17 +161,64 @@ public class PrintVisitor implements HOPE6Visitor {
       return data;
    }
 
-   public Object visit(ASTarray_type node, Object data) {
-      System.out.print(node.value);
+   public Object visit(ASTparameter_list node, Object data) {
+      if (node.jjtGetNumChildren() == 1) {
+         node.jjtGetChild(0).jjtAccept(this, data); // parameter
+      }
+      else {
+         node.jjtGetChild(0).jjtAccept(this, data); // parameter
+         System.out.print(" , ");
+         node.jjtGetChild(1).jjtAccept(this, data); // parameter
+      }
+      return data;
+   }
+
+   public Object visit(ASTparameter node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data); // type
+      System.out.print(" ");
+      node.jjtGetChild(1).jjtAccept(this, data); // identifier
+      return data;
+   }
+
+   public Object visit(ASTargument_list node, Object data) {
+      if (node.jjtGetNumChildren() == 1) {
+         node.jjtGetChild(0).jjtAccept(this, data); // argument
+      }
+      else {
+         node.jjtGetChild(0).jjtAccept(this, data); // argument
+         System.out.print(" , ");
+         node.jjtGetChild(1).jjtAccept(this, data); // argument
+      }
+      return data;
+   }
+
+   public Object visit(ASTargument node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data); // fragment
       return data;
    }
 
    public Object visit(ASTbinary_arith_op node, Object data) {
+      System.out.print(" ");
+      node.jjtGetChild(0).jjtAccept(this, data); // op
+      System.out.print(" ");
+      node.jjtGetChild(1).jjtAccept(this, data); // fragment
+      return data;
+   }
+
+   public Object visit(ASTarith_op node, Object data) {
       System.out.print(node.value);
       return data;
    }
 
    public Object visit(ASTbinary_logic_op node, Object data) {
+      System.out.print(" ");
+      node.jjtGetChild(0).jjtAccept(this, data); // op
+      System.out.print(" ");
+      node.jjtGetChild(1).jjtAccept(this, data); // fragment
+      return data;
+   }
+
+   public Object visit(ASTlogic_op node, Object data) {
       System.out.print(node.value);
       return data;
    }

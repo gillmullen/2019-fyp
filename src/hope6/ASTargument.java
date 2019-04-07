@@ -6,14 +6,14 @@ class ASTargument extends SimpleNode {
     super(id);
   }
 
-  public ASTargument(HOPE7 p, int id) {
+  public ASTargument(HOPE6 p, int id) {
     super(p, id);
   }
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(HOPE7Visitor visitor, Object data) {
+  public Object jjtAccept(HOPE6Visitor visitor, Object data) {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=546c6e30696cf631b8758ee5ca6bab31 (do not edit this line) */
+/* JavaCC - OriginalChecksum=5f050a70ad8476bce238f69b15ea6285 (do not edit this line) */

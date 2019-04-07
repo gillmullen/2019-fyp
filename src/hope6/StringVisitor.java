@@ -8,6 +8,7 @@ import java.util.ListIterator;
 public class StringVisitor implements HOPE6Visitor {
 
    SymbolTable symbolTable = new SymbolTable();
+   String scope = "global";
 
    public Boolean containsString (ArrayList<DeclaredStrings> strs, String t){
       DeclaredStrings ds;
@@ -26,14 +27,35 @@ public class StringVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTprogram node, Object data) {
-      node.jjtGetChild(0).jjtAccept (this, data);
+      node.childrenAccept(this, data);
+      return data;
+   }
+
+   public Object visit(ASTmain node, Object data) {
+      scope = "main";
+      node.jjtGetChild(0).jjtAccept(this, data);
+      return data;
+   }
+
+   public Object visit(ASTfunction_declarations node, Object data) {
+      if(node.jjtGetNumChildren() != 0) {
+         node.childrenAccept(this, data);
+      }
+      return data;
+   }
+
+   public Object visit(ASTfunction node, Object data) {
+      String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      symbolTable.insert(scope, id, type, "FUNC");
+      scope = id;
+      node.childrenAccept(this, data);
       return data;
    }
 
    public Object visit(ASTstatement_block node, Object data) {
       if(node.jjtGetNumChildren() != 0) {
-         node.jjtGetChild(0).jjtAccept(this, data); //statement
-         node.jjtGetChild(1).jjtAccept(this, data); //statement_block
+         node.childrenAccept(this, data);
       }
       return data;
    }
@@ -44,12 +66,8 @@ public class StringVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTexpression node, Object data) {
-      if(node.jjtGetNumChildren() == 1) {
-         return (String) node.jjtGetChild(0).jjtAccept(this, data);
-      }
-      else {
-         return "";
-      }
+      node.childrenAccept(this, data);
+      return data;
    }
 
    public Object visit(ASTcondition node, Object data) {
@@ -59,6 +77,17 @@ public class StringVisitor implements HOPE6Visitor {
       else {
          return "";
       }
+   }
+
+   public Object visit(ASTfragment node, Object data) {
+      return (String) node.jjtGetChild(0).jjtAccept(this, data);
+   }
+
+   public Object visit(ASTfunction_call node, Object data) {
+      String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      scope = id;
+      node.childrenAccept(this, data);
+      return data;
    }
 
    public Object visit(ASTinteger node, Object data) {
@@ -73,10 +102,6 @@ public class StringVisitor implements HOPE6Visitor {
       return node.value;
    }
 
-   public Object visit(ASTarray node, Object data) {
-      return data;
-   }
-
    public Object visit(ASTassignment node, Object data) {
       int offset;
       Context context = (Context) data;
@@ -84,41 +109,24 @@ public class StringVisitor implements HOPE6Visitor {
       ArrayList<DeclaredStrings> strings = context.strings;
 
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String type = symbolTable.getSymbol(id);
+      String type = symbolTable.getSymbol(scope, id);
 
-      if(type.equals("i8*"))
-      {
+      if(type.equals("i8*")) {
          id = id + ".0";
          while(containsString(strings, id)) {
             offset = id.lastIndexOf(".");
             id = id.substring(0, offset + 1) +
             Integer.toString((Integer.parseInt(id.substring(offset+1,id.length())))+1,10);
          }
-         String expr = (String) node.jjtGetChild(1).jjtAccept(this, data);
-         strings.add(new DeclaredStrings(id,expr));
       }
-
       return data;
    }
 
-   public Object visit(ASTvalue_declaration node, Object data) {
+   public Object visit(ASTdeclaration node, Object data) {
       String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      symbolTable.insert(id, type);
+      symbolTable.insert(scope, id, type, "VAR");
       return data;
-   }
-
-   public Object visit(ASTarray_declaration node, Object data) {
-      String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String size = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      String id = (String) node.jjtGetChild(2).jjtAccept(this, data);
-      symbolTable.insert(id, type);
-      symbolTable.insertArray(id, size);
-      return data;
-   }
-
-   public Object visit(ASTarray_size node, Object data) {
-      return node.value;
    }
 
    public Object visit(ASTprint node, Object data) {
@@ -145,15 +153,43 @@ public class StringVisitor implements HOPE6Visitor {
       return node.value;
    }
 
-   public Object visit(ASTarray_type node, Object data) {
-      return node.value;
+   public Object visit(ASTparameter_list node, Object data) {
+      node.childrenAccept(this, data);
+      return data;
+   }
+
+   public Object visit(ASTparameter node, Object data) {
+      String type = (String) node.jjtGetChild(0).jjtAccept(this, data); // type
+      String id = (String) node.jjtGetChild(1).jjtAccept(this, data); // identifier
+      symbolTable.insert(scope, id, type, "PARAM");
+      return data;
+   }
+
+   public Object visit(ASTargument_list node, Object data) {
+      node.childrenAccept(this, data);
+      return data;
+   }
+
+   public Object visit(ASTargument node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data);
+      return data;
    }
 
    public Object visit(ASTbinary_arith_op node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data);
+      return data;
+   }
+
+   public Object visit(ASTarith_op node, Object data) {
       return node.value;
    }
 
    public Object visit(ASTbinary_logic_op node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data);
+      return data;
+   }
+
+   public Object visit(ASTlogic_op node, Object data) {
       return node.value;
    }
 

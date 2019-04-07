@@ -6,14 +6,14 @@ class ASTmain extends SimpleNode {
     super(id);
   }
 
-  public ASTmain(HOPE7 p, int id) {
+  public ASTmain(HOPE6 p, int id) {
     super(p, id);
   }
 
 
   /** Accept the visitor. **/
-  public Object jjtAccept(HOPE7Visitor visitor, Object data) {
+  public Object jjtAccept(HOPE6Visitor visitor, Object data) {
     return visitor.visit(this, data);
   }
 }
-/* JavaCC - OriginalChecksum=73189f086be92320472f7eb0a145edd9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=daf7c3830adc1c22f307872674bfe317 (do not edit this line) */

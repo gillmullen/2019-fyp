@@ -2,56 +2,68 @@
 public interface HOPE6TreeConstants
 {
   public int JJTPROGRAM = 0;
-  public int JJTSTATEMENT_BLOCK = 1;
-  public int JJTSTATEMENT = 2;
-  public int JJTVOID = 3;
-  public int JJTEXPRESSION = 4;
-  public int JJTCONDITION = 5;
-  public int JJTINTEGER = 6;
-  public int JJTSTRING = 7;
-  public int JJTBOOL = 8;
-  public int JJTARRAY = 9;
-  public int JJTASSIGNMENT = 10;
-  public int JJTVALUE_DECLARATION = 11;
-  public int JJTARRAY_DECLARATION = 12;
-  public int JJTARRAY_SIZE = 13;
-  public int JJTPRINT = 14;
-  public int JJTIF_STATEMENT = 15;
-  public int JJTWHILE_LOOP = 16;
-  public int JJTLHS_IDENTIFIER = 17;
-  public int JJTRHS_IDENTIFIER = 18;
-  public int JJTTYPE = 19;
-  public int JJTARRAY_TYPE = 20;
-  public int JJTBINARY_ARITH_OP = 21;
-  public int JJTBINARY_LOGIC_OP = 22;
-  public int JJTCOMP_OP = 23;
+  public int JJTMAIN = 1;
+  public int JJTFUNCTION_DECLARATIONS = 2;
+  public int JJTFUNCTION = 3;
+  public int JJTSTATEMENT_BLOCK = 4;
+  public int JJTSTATEMENT = 5;
+  public int JJTEXPRESSION = 6;
+  public int JJTCONDITION = 7;
+  public int JJTFRAGMENT = 8;
+  public int JJTFUNCTION_CALL = 9;
+  public int JJTINTEGER = 10;
+  public int JJTSTRING = 11;
+  public int JJTBOOL = 12;
+  public int JJTASSIGNMENT = 13;
+  public int JJTDECLARATION = 14;
+  public int JJTPRINT = 15;
+  public int JJTIF_STATEMENT = 16;
+  public int JJTWHILE_LOOP = 17;
+  public int JJTLHS_IDENTIFIER = 18;
+  public int JJTRHS_IDENTIFIER = 19;
+  public int JJTTYPE = 20;
+  public int JJTPARAMETER_LIST = 21;
+  public int JJTPARAMETER = 22;
+  public int JJTARGUMENT_LIST = 23;
+  public int JJTARGUMENT = 24;
+  public int JJTBINARY_ARITH_OP = 25;
+  public int JJTARITH_OP = 26;
+  public int JJTBINARY_LOGIC_OP = 27;
+  public int JJTLOGIC_OP = 28;
+  public int JJTCOMP_OP = 29;
 
 
   public String[] jjtNodeName = {
     "program",
+    "main",
+    "function_declarations",
+    "function",
     "statement_block",
     "statement",
-    "void",
     "expression",
     "condition",
+    "fragment",
+    "function_call",
     "integer",
     "string",
     "bool",
-    "array",
     "assignment",
-    "value_declaration",
-    "array_declaration",
-    "array_size",
+    "declaration",
     "print",
     "if_statement",
     "while_loop",
     "lhs_identifier",
     "rhs_identifier",
     "type",
-    "array_type",
+    "parameter_list",
+    "parameter",
+    "argument_list",
+    "argument",
     "binary_arith_op",
+    "arith_op",
     "binary_logic_op",
+    "logic_op",
     "comp_op",
   };
 }
-/* JavaCC - OriginalChecksum=029c1c6d348a25c79be9f9aff2e75aa0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=e37c6fa9d3c62d549397e3f6f1bb42d9 (do not edit this line) */

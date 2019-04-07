@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class HOPE6 {
 
    public static SymbolTable st = new SymbolTable();
+   public static String scope = "global";
 
    public static void main(String args[]) {
 
@@ -56,7 +57,7 @@ public class HOPE6 {
          System.out.println("\nSymbol Table:");
          st.print();
 
-         System.out.println("\nSemantic Analysis:");
+         System.out.println("Semantic Analysis:");
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
@@ -114,13 +115,14 @@ TOKEN [IGNORE_CASE] : /* Keywords */
     <INT : "int"> |
     <STRING : "string"> |
     <BOOL : "boolean"> |
-    <INTARRAY : "int["> |
-    <STRARRAY : "string["> |
     <TRUE : "true"> |
     <FALSE : "false"> |
     <IF : "if"> |
     <ELSE : "else"> |
-    <WHILE: "while">
+    <WHILE: "while"> |
+    <DEF : "def"> |
+    <MAIN : "main"> |
+    <RETURN : "return">
 }
 
 TOKEN : /* Punctuation */
@@ -144,9 +146,7 @@ TOKEN : /* Punctuation */
    <LT : "<"> |
    <GE: ">="> |
    <LE : "<="> |
-   <COMMA : ","> |
-   <LSB : "["> |
-   <RSB : "]">
+   <COMMA : ",">
 }
 
 TOKEN : /* Numbers and identifiers */
@@ -167,8 +167,28 @@ TOKEN : /* Unrecognized tokens */
 
 SimpleNode program() : {}
 {
-   statement_block() <EOF>
+   function_declarations() main() <EOF>
    { return jjtThis; }
+}
+
+void main() : {}
+{
+   { scope = "main"; }
+   <MAIN> <LCB> statement_block() <RCB> | statement_block()
+}
+
+void function_declarations() : {}
+{
+   function() function_declarations() | {}
+}
+
+void function() : { String id; String retType; }
+{
+   <DEF> retType = type() id = lhs_identifier() { if(retType.equals("int")) { retType = "integer"; } st.insertFunc(scope, id, retType, "FUNC"); scope = id; }
+   <LBR> parameter_list() <RBR> <LCB>
+   statement_block()
+   <RETURN> <LBR> ( expression() | {} ) <RBR> <SEMIC>
+   <RCB>
 }
 
 void statement_block() : {}
@@ -178,27 +198,32 @@ void statement_block() : {}
 
 void statement() : {}
 {
+   LOOKAHEAD(3) function_call() |
    print() |
    assignment() |
-   value_declaration() |
-   array_declaration() |
+   declaration() |
    if_statement() |
    while_loop()
 }
 
-void expression() #void : {}
+void expression() : {}
 {
-   fragment() ( ( binary_arith_op() | binary_logic_op() ) fragment() #expression(3) )*
+   LOOKAHEAD(3) function_call() | fragment() ( binary_arith_op() | binary_logic_op() )*
 }
 
 void condition() : {}
 {
-   fragment() ( comp_op() fragment() #condition(3) )*
+   fragment() ( comp_op() fragment() )*
 }
 
-void fragment() #void : {}
+void fragment() : {}
 {
-   integer() | string() | bool() | rhs_identifier() | <LSB> array() <RSB>
+   integer() | string() | bool() | rhs_identifier()
+}
+
+void function_call() : { String id; }
+{
+   id = rhs_identifier() { scope = id; } <LBR> argument_list() <RBR>
 }
 
 void integer() : { Token t; }
@@ -216,34 +241,19 @@ void bool() : { Token t; }
    ( t = <TRUE> | t = <FALSE> ) { jjtThis.value = t.image; }
 }
 
-void array() : {}
-{
-   fragment() (<COMMA> fragment())*
-}
-
 void assignment() : {}
 {
    lhs_identifier() <EQUALS> expression() <SEMIC>
 }
 
-void value_declaration() : { String type; String id; }
+void declaration() : { String type; String id; }
 {
-   type = type() id = lhs_identifier() <SEMIC> { st.insert(id, type); }
-}
-
-void array_declaration() : { String type; String id; String size; }
-{
-   type = array_type() size = array_size() <RSB> id = lhs_identifier() <SEMIC> { st.insert(id, type + "]"); st.insertArray(id, size); }
-}
-
-String array_size() : { Token t; }
-{
-   ( t = <NUM> ) { jjtThis.value = t.image; return t.image; }
+   type = type() id = lhs_identifier() <SEMIC> { if(type.equals("int")) { type = "integer"; } st.insert(scope, id, type, "VAR"); }
 }
 
 void print() : {}
 {
-   <PRINT> <LBR> expression() <RBR> <SEMIC>
+   <PRINT> <LBR> fragment() <RBR> <SEMIC>
 }
 
 void if_statement() : {}
@@ -268,20 +278,45 @@ String rhs_identifier() : { Token t; }
 
 String type() : { Token t; }
 {
-   ( t = <INT> | t = <STRING> | t = <BOOL>) { jjtThis.value = t.image; return t.image; }
+   ( t = <INT> | t = <STRING> | t = <BOOL> ) { jjtThis.value = t.image; return t.image; }
 }
 
-String array_type() : { Token t; }
+void parameter_list() : {}
 {
-   ( t = <INTARRAY> | t = <STRARRAY> ) { jjtThis.value = t.image; return t.image; }
+   parameter() ( <COMMA> parameter() )*
+}
+
+void parameter() : { String id; String type; }
+{
+   type = type() id = lhs_identifier() { if(type.equals("int")) { type = "integer"; } st.insert(scope, id, type, "PARAM"); }
+}
+
+void argument_list() : {}
+{
+   argument() ( <COMMA> argument() )*
+}
+
+void argument() : {}
+{
+   fragment()
 }
 
 void binary_arith_op() : { Token t; }
 {
+   arith_op() fragment()
+}
+
+void arith_op() : { Token t; }
+{
    ( t = <PLUS_SIGN> | t = <MINUS_SIGN> | t = <MUL_SIGN> | t = <DIV_SIGN> ) { jjtThis.value = t.image; }
 }
 
-void binary_logic_op() : { Token t; }
+void binary_logic_op() : {}
+{
+   logic_op() fragment()
+}
+
+void logic_op() : { Token t; }
 {
    ( t = <AND> | t = <OR> ) { jjtThis.value = t.image; }
 }

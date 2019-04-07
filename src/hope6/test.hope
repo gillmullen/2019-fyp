@@ -1,3 +1,10 @@
-int[2] arr;
-arr = [1,2];
-print(arr);
+def int add(int a) {
+  a = a + 1;
+  return (a);
+}
+
+main {
+  int y;
+  y = add(x, 2);
+  print(y);
+}
