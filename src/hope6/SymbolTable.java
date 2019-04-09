@@ -25,7 +25,7 @@ public class SymbolTable {
       currentScope.add(id);
       String key = id + scope;
       types.put(key, type);
-      declTypes.put(key, declType);
+      declTypes.put(id, declType);
    }
 
    public void insertFunc(String scope, String id, String type, String declType) { // inserts new identifier, and its type and declaration type (var/const/func), into symbol table within a specific scope
@@ -33,7 +33,7 @@ public class SymbolTable {
       currentScope.add(id);
       String key = id + scope;
       types.put(key, type);
-      declTypes.put(key, declType);
+      declTypes.put(id, declType);
    }
 
    public Boolean checkScope(String scope) {
@@ -65,7 +65,7 @@ public class SymbolTable {
          System.out.println("Scope: " + currentScope);
          for(int i = 0; i < scope.size(); i++) { // for each identifier within a scope
             key = scope.get(i) + currentScope;
-            System.out.println("Declaration Type= " + declTypes.get(key) + ", Identifier= " + scope.get(i) + ", Variable/Return Type= " + types.get(key));
+            System.out.println("Declaration Type= " + declTypes.get(scope.get(i)) + ", Identifier= " + scope.get(i) + ", Variable/Return Type= " + types.get(key));
          }
          System.out.println();
       }
@@ -99,7 +99,7 @@ public class SymbolTable {
    public String getSymbol(String scope, String id) {
       String type = types.get(id + scope);
       String mty;
-      if(type.equals("integer")) {
+      if(type.equals("integer") || type.equals("int")) {
          mty = "i32";
       }
       else if(type.equals("boolean")) {
@@ -123,7 +123,7 @@ public class SymbolTable {
          scope = st.get(currentScope);
          for(int i = 0; i < scope.size(); i++) { // for each identifier within a scope
             key = scope.get(i) + currentScope;
-            if (!declTypes.get(key).equals("FUNC")) { // if variable
+            if (!declTypes.get(scope.get(i)).equals("FUNC")) { // if variable
                variables.add(key);
             }
          }
@@ -143,7 +143,7 @@ public class SymbolTable {
          scope = st.get(currentScope);
          for(int i = 0; i < scope.size(); i++) { // for each identifier within a scope
             key = scope.get(i) + currentScope;
-            if (declTypes.get(key).equals("FUNC")) { // if function
+            if (declTypes.get(scope.get(i)).equals("FUNC")) { // if function
                functions.add(scope.get(i));
             }
          }

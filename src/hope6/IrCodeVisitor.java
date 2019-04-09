@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.ListIterator;
 
 public class IrCodeVisitor implements HOPE6Visitor {
-
    private int tmpCounter = 1;
    private int labelCounter = 1;
    String scope = "global";
@@ -28,7 +27,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
    static ArrayList<DeclaredStrings> generateStrings(SimpleNode root, Object data) {
       StringVisitor sv = new StringVisitor ();
       root.jjtAccept (sv, data);
-      return ((Context)data).strings;
+      return ((Context) data).strings;
    }
 
    static void beginIr(SimpleNode root, Object data) {
@@ -56,11 +55,6 @@ public class IrCodeVisitor implements HOPE6Visitor {
             buffer.write(command);
             buffer.newLine();
          }
-
-         buffer.write("define i32 @main ()");
-         buffer.newLine();
-         buffer.write("{");
-         buffer.newLine();
       }
       catch(IOException e) {
          System.out.println("Failed to write start of IR code to file");
@@ -91,14 +85,27 @@ public class IrCodeVisitor implements HOPE6Visitor {
       BufferedWriter buffer = context.buffer;
 
       beginIr(node, data);
-      node.jjtGetChild(0).jjtAccept(this, data);
-      endIr(buffer);
+      node.childrenAccept(this, data);
       return data;
    }
 
    public Object visit(ASTmain node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+
+      try {
+         buffer.write("define i32 @main ()");
+         buffer.newLine();
+         buffer.write("{");
+         buffer.newLine();
+      }
+      catch(IOException e) {
+         System.out.println("Failed to write end of IR code to file");
+         e.printStackTrace(System.out);
+      }
       scope = "main";
       node.jjtGetChild(0).jjtAccept(this, data); // statement_block
+      endIr(buffer);
       return data;
    }
 
@@ -153,6 +160,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
       signature += ")";
 
       String command = "define " + mty + " @" + id + "(";
+
       for (int i = 0; i < numParams; i++) {
          command += " " + paramsMty[i] + " %." + paramsId[i];
          if(i < params.length - 1) {
@@ -184,18 +192,18 @@ public class IrCodeVisitor implements HOPE6Visitor {
          String t = getTmp();
          command = t + " = add i1 0,0\nbr label %exit\n"; // add nop before exit label
          buffer.write(command);
-         buffer.write("exit:\n");
 
+         buffer.write("exit:\n");
          String tmp = getTmp();
          command = tmp + " = load " + mty + ", " + mty + "* %.p.return";
          registerTypes.put(tmp, mty);
          buffer.write(command);
+         buffer.newLine();
          command = "ret " + mty + " " + tmp;
          buffer.write(command);
          buffer.newLine();
          buffer.write("}\n");
          buffer.newLine();
-
       }
       catch (IOException e) {
          System.out.println("Failed to write IR code for function to file");
@@ -218,9 +226,9 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTexpression node, Object data) {
-      String result;
+      String result = "";
       if(node.jjtGetNumChildren() == 1) {
-         result = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment or function_call
+         result = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
       }
       else {
          node.jjtGetChild(0).jjtAccept(this, data); // fragment
@@ -276,17 +284,19 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTfragment node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
-      return data;
+      String frag = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      return frag;
    }
 
    public Object visit(ASTfunction_call node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
+
       String tmp = getTmp();
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String params = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      String funcType = symbolTable.getSymbol("global", id);
+      String funcType = registerTypes.get(id);
+      String prevScope = scope;
       scope = id;
 
       String command = tmp + " = call " + funcType + " @" + id + " (" + params + ")";
@@ -297,10 +307,10 @@ public class IrCodeVisitor implements HOPE6Visitor {
          buffer.newLine();
       }
       catch (IOException e) {
-         System.out.println ("Failed to write IR code for a function call to file");
+         System.out.println("Failed to write IR code for a function call to file");
          e.printStackTrace (System.out);
       }
-
+      scope = prevScope;
       return tmp;
    }
 
@@ -319,6 +329,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
    public Object visit (ASTassignment node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
+
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String expr = (String) node.jjtGetChild(1).jjtAccept(this, data);
       String type = symbolTable.getSymbol(scope, id);
@@ -351,16 +362,16 @@ public class IrCodeVisitor implements HOPE6Visitor {
          buffer.newLine();
       }
       catch (IOException e) {
-         System.out.println ("Failed to write IR code for an assignment to file. Exception: ");
+         System.out.println("Failed to write IR code for an assignment to file. Exception: ");
          e.printStackTrace (System.out);
       }
-
       return data;
    }
 
    public Object visit (ASTdeclaration node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
+
       String type = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String id = (String) node.jjtGetChild(1).jjtAccept(this, data);
       symbolTable.insert(scope, id, type, "VAR");
@@ -430,10 +441,9 @@ public class IrCodeVisitor implements HOPE6Visitor {
          buffer.newLine();
       }
       catch (IOException e) {
-         System.out.println ("Failed to write IR code for print statement to file");
+         System.out.println("Failed to write IR code for print statement to file");
          e.printStackTrace (System.out);
       }
-
       return data;
    }
 
@@ -450,26 +460,26 @@ public class IrCodeVisitor implements HOPE6Visitor {
       try {
          buffer.write(command);
          buffer.newLine();
+
          buffer.write(trueBlock + ":");
          buffer.newLine();
          node.jjtGetChild(1).jjtAccept(this, data);
-
          buffer.write("br label %" + endBlock);
          buffer.newLine();
+
          buffer.write(falseBlock + ":");
          buffer.newLine();
          node.jjtGetChild(2).jjtAccept(this, data);
-
          buffer.write("br label %" + endBlock);
          buffer.newLine();
+
          buffer.write(endBlock + ":");
          buffer.newLine();
       }
       catch (IOException e) {
-         System.out.println("Failed to write IR code for if to file");
+         System.out.println("Failed to write IR code for if statement to file");
          e.printStackTrace(System.out);
       }
-
       return data;
    }
 
@@ -488,6 +498,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
          command = "br i1 " + condition + ", label %" + trueBlock + ", label %" + endBlock;
          buffer.write(command);
          buffer.newLine();
+
          buffer.write(trueBlock + ":");
          buffer.newLine();
          node.jjtGetChild(1).jjtAccept(this, data);
@@ -501,7 +512,6 @@ public class IrCodeVisitor implements HOPE6Visitor {
          System.out.println("Failed to write IR code for while to file");
          e.printStackTrace(System.out);
       }
-
       return data;
    }
 
@@ -514,10 +524,15 @@ public class IrCodeVisitor implements HOPE6Visitor {
       BufferedWriter buffer = context.buffer;
 
       String id = (String) node.value;
-      String type = symbolTable.getSymbol(scope, id);
+      String type;
+      if(symbolTable.getDeclType(id).equals("FUNC")) {
+         type = symbolTable.getSymbol("global", id);
+      }
+      else {
+         type = symbolTable.getSymbol(scope, id);
+      }
       String tmp = getTmp();
       String command = tmp + " = " + "load " + type + ", " + type + "* %.p." + id;
-
       registerTypes.put(tmp,type);
 
       try {
@@ -525,10 +540,9 @@ public class IrCodeVisitor implements HOPE6Visitor {
          buffer.newLine();
       }
       catch (IOException e) {
-         System.out.println ("Failed to write IR code for RHS identifier to file");
+         System.out.println("Failed to write IR code for RHS identifier to file");
          e.printStackTrace (System.out);
       }
-
       return tmp;
    }
 
@@ -571,12 +585,11 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTbinary_arith_op node, Object data) {
-      Context context = (Context) data;
+      Context context = (Context) data
       BufferedWriter buffer = context.buffer;
       String command = "";
-      String result;
 
-      result = getTmp();
+      String result = getTmp();
       SimpleNode parent = (SimpleNode) node.jjtGetParent().jjtGetChild(0);
       String arg1 = (String) parent.value;
       String op = (String) node.jjtGetChild(0).jjtAccept(this, data);
@@ -618,9 +631,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       String command = "";
-      String result;
-
-      result = getTmp();
+      String result = getTmp();
       SimpleNode parent = (SimpleNode) node.jjtGetParent();
       String arg1 = (String) parent.jjtGetChild(0).jjtAccept(this, data);
       String op = (String) node.jjtGetChild(0).jjtAccept(this, data);

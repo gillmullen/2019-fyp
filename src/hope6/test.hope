@@ -5,6 +5,6 @@ def int add(int a) {
 
 main {
   int y;
-  y = add(x, 2);
+  y = add(1);
   print(y);
 }

@@ -21,7 +21,6 @@ public class HOPE6 {
    public static String scope = "global";
 
    public static void main(String args[]) {
-
       HOPE6 parser = null;
       String irFileName = "HOPE6.ll";
 
@@ -73,13 +72,11 @@ public class HOPE6 {
             System.out.println("Failed to write LLVM code to file");
             e.printStackTrace(System.out);
          }
-
       }
       catch(ParseException e) {
          System.out.println(e.getMessage());
       }
    }
-
 }
 
 PARSER_END(HOPE6)
@@ -164,7 +161,6 @@ TOKEN : /* Unrecognized tokens */
 }
 
 /* Section 4: Grammar */
-
 SimpleNode program() : {}
 {
    function_declarations() main() <EOF>
@@ -253,7 +249,7 @@ void declaration() : { String type; String id; }
 
 void print() : {}
 {
-   <PRINT> <LBR> fragment() <RBR> <SEMIC>
+   <PRINT> <LBR> expression() <RBR> <SEMIC>
 }
 
 void if_statement() : {}
