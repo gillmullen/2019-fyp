@@ -22,7 +22,7 @@ ret i32 %.t5
 define i32 @main ()
 {
 %.p.y = alloca i32
-%.t6 = call null @add (null)
+%.t6 = call i32 @add (1)
 store i32 %.t6, i32* %.p.y
 %.t7 = load i32, i32* %.p.y
 call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i32 0, i32 0), i32 %.t7)

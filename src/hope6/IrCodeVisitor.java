@@ -294,12 +294,12 @@ public class IrCodeVisitor implements HOPE6Visitor {
 
       String tmp = getTmp();
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String params = (String) node.jjtGetChild(1).jjtAccept(this, data);
-      String funcType = registerTypes.get(id);
+      String args = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      String funcType = symbolTable.getSymbol("global", id);
       String prevScope = scope;
       scope = id;
 
-      String command = tmp + " = call " + funcType + " @" + id + " (" + params + ")";
+      String command = tmp + " = call " + funcType + " @" + id + " (" + args + ")";
       registerTypes.put(tmp, funcType);
 
       try {
@@ -582,7 +582,8 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTargument node, Object data) {
-      return node.value;
+      String arg = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      return arg;
    }
 
    public Object visit(ASTbinary_arith_op node, Object data) {
