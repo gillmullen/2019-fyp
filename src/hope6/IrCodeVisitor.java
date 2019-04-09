@@ -582,8 +582,47 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTargument node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+      String type, var;
+      DeclaredStrings s;
       String arg = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      return arg;
+
+      if(arg.matches("-?\\d+")) {
+         type = "i32";
+      }
+      else if(arg.charAt(0) == '"') {
+         ListIterator li = context.strings.listIterator ();
+         var = "";
+         while(li.hasNext()) {
+            s = (DeclaredStrings) li.next();
+            if(s.value.equals(arg)) {
+               var = s.var;
+               break;
+            }
+         }
+
+         int length = arg.length() - 1;
+         String tmp = getTmp();
+         registerTypes.put(tmp, "i8*");
+         String command = tmp + " = getelementptr [" + length + " x i8], [" + length + " x i8]* @." + var + ", i64 0, i64 0";
+         arg = tmp;
+         type = "i8*";
+         try {
+            buffer.write(command);
+            buffer.newLine();
+         }
+         catch (IOException e) {
+            System.out.println("Failed to write IR code for RHS identifier to file");
+            e.printStackTrace(System.out);
+         }
+      }
+      else {
+         type = registerTypes.get(arg);
+      }
+
+      String finalArg = type + " " + arg;
+      return finalArg;
    }
 
    public Object visit(ASTbinary_arith_op node, Object data) {
