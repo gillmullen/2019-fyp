@@ -525,8 +525,9 @@ public class IrCodeVisitor implements HOPE6Visitor {
 
       String id = (String) node.value;
       String type;
+
       if(symbolTable.getDeclType(id).equals("FUNC")) {
-         type = symbolTable.getSymbol("global", id);
+         return id;
       }
       else {
          type = symbolTable.getSymbol(scope, id);
@@ -585,13 +586,13 @@ public class IrCodeVisitor implements HOPE6Visitor {
    }
 
    public Object visit(ASTbinary_arith_op node, Object data) {
-      Context context = (Context) data
+      Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       String command = "";
 
       String result = getTmp();
       SimpleNode parent = (SimpleNode) node.jjtGetParent().jjtGetChild(0);
-      String arg1 = (String) parent.value;
+      String arg1 = (String) parent.jjtAccept(this, data);
       String op = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String arg2 = (String) node.jjtGetChild(1).jjtGetChild(0).jjtAccept(this, data);
 

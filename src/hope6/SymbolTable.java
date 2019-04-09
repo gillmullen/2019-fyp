@@ -92,8 +92,12 @@ public class SymbolTable {
       return false;
    }
 
-   public String getType(String scope, String id) { // gets type of identifier (int/bool)
+   public String getType(String scope, String id) { // gets type of identifier (int/bool/str)
       return types.get(id + scope);
+   }
+
+   public String getDeclType(String id) { // gets type of identifier (func/var/param)
+      return declTypes.get(id);
    }
 
    public String getSymbol(String scope, String id) {

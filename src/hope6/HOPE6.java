@@ -12,7 +12,6 @@ public class HOPE6/*@bgen(jjtree)*/implements HOPE6TreeConstants, HOPE6Constants
    public static String scope = "global";
 
    public static void main(String args[]) {
-
       HOPE6 parser = null;
       String irFileName = "HOPE6.ll";
 
@@ -64,7 +63,6 @@ public class HOPE6/*@bgen(jjtree)*/implements HOPE6TreeConstants, HOPE6Constants
             System.out.println("Failed to write LLVM code to file");
             e.printStackTrace(System.out);
          }
-
       }
       catch(ParseException e) {
          System.out.println(e.getMessage());
@@ -668,7 +666,7 @@ public class HOPE6/*@bgen(jjtree)*/implements HOPE6TreeConstants, HOPE6Constants
     try {
       jj_consume_token(PRINT);
       jj_consume_token(LBR);
-      fragment();
+      expression();
       jj_consume_token(RBR);
       jj_consume_token(SEMIC);
     } catch (Throwable jjte000) {
@@ -1148,6 +1146,18 @@ public class HOPE6/*@bgen(jjtree)*/implements HOPE6TreeConstants, HOPE6Constants
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_7() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_5() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(LBR)) return true;
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
   static private boolean jj_3_1() {
     if (jj_3R_5()) return true;
     return false;
@@ -1221,18 +1231,6 @@ public class HOPE6/*@bgen(jjtree)*/implements HOPE6TreeConstants, HOPE6Constants
 
   static private boolean jj_3R_6() {
     if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_7() {
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_5() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(LBR)) return true;
-    if (jj_3R_7()) return true;
     return false;
   }
 
@@ -1450,18 +1448,21 @@ public class HOPE6/*@bgen(jjtree)*/implements HOPE6TreeConstants, HOPE6Constants
       for (int i = 0; i < jj_endpos; i++) {
         jj_expentry[i] = jj_lasttokens[i];
       }
-      jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
+      boolean exists = false;
+      for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
+        exists = true;
         int[] oldentry = (int[])(it.next());
         if (oldentry.length == jj_expentry.length) {
           for (int i = 0; i < jj_expentry.length; i++) {
             if (oldentry[i] != jj_expentry[i]) {
-              continue jj_entries_loop;
+              exists = false;
+              break;
             }
           }
-          jj_expentries.add(jj_expentry);
-          break jj_entries_loop;
+          if (exists) break;
         }
       }
+      if (!exists) jj_expentries.add(jj_expentry);
       if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
     }
   }
