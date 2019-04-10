@@ -189,6 +189,11 @@ public class IrCodeVisitor implements HOPE6Visitor {
          }
          node.jjtGetChild(3).jjtAccept(this, data); // statement_block (function body)
 
+         String expr = (String) node.jjtGetChild(4).jjtAccept(this, data);
+         command = "store " + type + " " + expr + ", " + type + "* %.p.return\n";
+         buffer.write(command);
+         buffer.newLine();
+
          String t = getTmp();
          command = t + " = add i1 0,0\nbr label %exit\n"; // add nop before exit label
          buffer.write(command);
