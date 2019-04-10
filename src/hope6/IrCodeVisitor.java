@@ -190,7 +190,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
          node.jjtGetChild(3).jjtAccept(this, data); // statement_block (function body)
 
          String expr = (String) node.jjtGetChild(4).jjtAccept(this, data);
-         command = "store " + type + " " + expr + ", " + type + "* %.p.return\n";
+         command = "store " + mty + " " + expr + ", " + mty + "* %.p.return\n";
          buffer.write(command);
          buffer.newLine();
 

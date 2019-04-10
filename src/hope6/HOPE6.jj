@@ -281,7 +281,7 @@ void function() : {/*@bgen(jjtree) function */
    <DEF> retType = type() id = lhs_identifier() { if(retType.equals("int")) { retType = "integer"; } st.insertFunc(scope, id, retType, "FUNC"); scope = id; }
    <LBR> parameter_list() <RBR> <LCB>
    statement_block()
-   <RETURN> <LBR> ( expression() | {} ) <RBR> <SEMIC>
+   <RETURN> <LBR> expression() <RBR> <SEMIC>
    <RCB>/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
