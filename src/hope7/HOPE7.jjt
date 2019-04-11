@@ -227,7 +227,7 @@ void declaration() : { String type; String id; }
 
 void array_declaration() : { String type; String id; String size; }
 {
-   type = type() <LSB> size = array_size() <RSB> id = lhs_identifier() <SEMIC> { System.out.println(scope); st.insertArray(scope, id, (type + "[]"), "VAR", size); }
+   type = type() <LSB> size = array_size() <RSB> id = lhs_identifier() <SEMIC> { st.insertArray(scope, id, (type + "[]"), "VAR", size); }
 }
 
 String array_size() : { Token t; }

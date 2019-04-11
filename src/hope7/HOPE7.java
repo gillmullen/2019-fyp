@@ -486,7 +486,7 @@ public class HOPE7/*@bgen(jjtree)*/implements HOPE7TreeConstants, HOPE7Constants
       jj_consume_token(SEMIC);
                                                                                  jjtree.closeNodeScope(jjtn000, true);
                                                                                  jjtc000 = false;
-                                                                                 System.out.println(scope); st.insertArray(scope, id, (type + "[]"), "VAR", size);
+                                                                                 st.insertArray(scope, id, (type + "[]"), "VAR", size);
     } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);

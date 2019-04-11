@@ -527,7 +527,7 @@ void array_declaration() : {/*@bgen(jjtree) array_declaration */
                                                                                  jjtree.closeNodeScope(jjtn000, true);
                                                                                  jjtc000 = false;
                                                                                }
-/*@egen*/ { System.out.println(scope); st.insertArray(scope, id, (type + "[]"), "VAR", size); }/*@bgen(jjtree)*/
+/*@egen*/ { st.insertArray(scope, id, (type + "[]"), "VAR", size); }/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
