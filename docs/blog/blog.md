@@ -51,3 +51,8 @@ For the next week, my goal is finish the sixth sub-language, and do the syntax a
 
 29/03/19
 Progress was minimum for this sprint due to an illness. So, I am trying to finish the IR for the sixth sub-language, which is the most difficult of them all due to the fact I am implementing arrays. I am still on schedule, with 2 weeks of development left and 1 left for evaluation this semester. My goal for next week is to finish both the sixth and seventh sub-languages.
+
+## My Ninth Blog Entry
+
+05/04/19
+Due to difficulty implementing arrays, the sixth and seventh sub-languages were swapped. This means that the sixth will implement functions and the seventh arrays. The sixth is nearly finished, IR needs finishing. Plans for next week is to finish both languages.
