@@ -203,7 +203,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
          buffer.newLine();
 
          String t = getTmp();
-         command = t + " = add i1 0,0"
+         command = t + " = add i1 0,0";
          buffer.write(command);
          buffer.newLine();
          command = "br label %exit"; // add nop before exit label
@@ -288,8 +288,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
 
          length = expr.length() - 1;
          tmp = getTmp();
-         command = tmp + " = getelementptr [" + length + " x i8], [" + length + " x i8]* @." + var + ", i64 0, i64 0";
-         buffer.newLine();
+         command = tmp + " = getelementptr [" + length + " x i8], [" + length + " x i8]* @." + var + ", i64 0, i64 0\n";
          command = command + "store i8* " + tmp + ", i8** %.p." + id;
       }
       else {
@@ -398,8 +397,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
 
          length = result.length() - 1;
          tmp = getTmp();
-         command = tmp + " = getelementptr [" + length + " x i8], [" + length + " x i8]* @." + var + ", i64 0, i64 0";
-         buffer.newLine();
+         command = tmp + " = getelementptr [" + length + " x i8], [" + length + " x i8]* @." + var + ", i64 0, i64 0\n";
          result = tmp;
          command = command + "call i32 @puts (i8* ";
       }
