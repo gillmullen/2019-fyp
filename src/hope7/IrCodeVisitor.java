@@ -657,16 +657,30 @@ public class IrCodeVisitor implements HOPE7Visitor {
 
    public Object visit(ASTarray node, Object data) {
       String array = "[";
-      // SimpleNode child1 = (SimpleNode) node.jjtGetChild(0).jjtGetChild(0);
-      // String type = child.toString();
-      //
-      // SimpleNode child;
-      // String value;
-      // for(int i = 0; i < node.jjtGetNumChildren(); i++) {
-      //    child = (SimpleNode) node.jjtGetChild(i).jjtGetChild(0);
-      //    value = (String) child;
-      //    if(value.equals(""))
-      // }
+      SimpleNode child1 = (SimpleNode) node.jjtGetChild(0).jjtGetChild(0);
+      String type = child1.toString();
+
+      SimpleNode child;
+      String value;
+      for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+         if(i != 0) {
+            array += ", ";
+         }
+         child = (SimpleNode) node.jjtGetChild(i).jjtGetChild(0);
+         value = (String) child.value;
+         if(type.equals("integer") && value.matches("-?\\d+")) {
+            array += "i32 " + value;
+         }
+         else if(type.equals("string") && value.matches("\".*\"")) {
+            array += "i8* " + value;
+         }
+         else { // type == identifier
+            child = (SimpleNode) node.jjtGetChild(i).jjtGetChild(0).jjtAccept(this, data);
+            value = (String) child.value;
+            array += registerTypes.get(value) + " " + value;
+         }
+      }
+      array += "]";
       return array;
    }
 

@@ -45,6 +45,7 @@ public class SymbolTable {
       LinkedList<String> currentScope = st.get(scope);
       currentScope.add(id);
       String key = id + scope;
+      type += "[]";
       types.put(key, type);
       arraySizes.put(key, size);
       declTypes.put(id, declType);
@@ -118,6 +119,7 @@ public class SymbolTable {
 
    public String getSymbol(String scope, String id) {
       String type = types.get(id + scope);
+      System.out.println(types.toString());
       String mty;
       if(type.equals("integer") || type.equals("int")) {
          mty = "i32";
@@ -125,8 +127,14 @@ public class SymbolTable {
       else if(type.equals("boolean")) {
          mty = "i1";
       }
-      else {
+      else if(type.equals("string")) {
          mty = "i8*";
+      }
+      else if(type.equals("int[]")) {
+         mty = "[" + arraySizes.get(id + scope) + " x i32]";
+      }
+      else {
+         mty = "[" + arraySizes.get(id + scope) + " x i8*]";
       }
       return mty;
    }
