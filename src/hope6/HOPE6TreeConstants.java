@@ -26,11 +26,9 @@ public interface HOPE6TreeConstants
   public int JJTPARAMETER = 22;
   public int JJTARGUMENT_LIST = 23;
   public int JJTARGUMENT = 24;
-  public int JJTBINARY_ARITH_OP = 25;
-  public int JJTARITH_OP = 26;
-  public int JJTBINARY_LOGIC_OP = 27;
-  public int JJTLOGIC_OP = 28;
-  public int JJTCOMP_OP = 29;
+  public int JJTARITH_OP = 25;
+  public int JJTLOGIC_OP = 26;
+  public int JJTCOMP_OP = 27;
 
 
   public String[] jjtNodeName = {
@@ -59,11 +57,9 @@ public interface HOPE6TreeConstants
     "parameter",
     "argument_list",
     "argument",
-    "binary_arith_op",
     "arith_op",
-    "binary_logic_op",
     "logic_op",
     "comp_op",
   };
 }
-/* JavaCC - OriginalChecksum=bca5b8eade0ba5d30a57365efec1e10c (do not edit this line) */
+/* JavaCC - OriginalChecksum=db8e0742ad181c9c0f55fe69f653fa2b (do not edit this line) */

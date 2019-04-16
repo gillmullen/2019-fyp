@@ -27,10 +27,8 @@ public interface HOPE6Visitor
   public Object visit(ASTparameter node, Object data);
   public Object visit(ASTargument_list node, Object data);
   public Object visit(ASTargument node, Object data);
-  public Object visit(ASTbinary_arith_op node, Object data);
   public Object visit(ASTarith_op node, Object data);
-  public Object visit(ASTbinary_logic_op node, Object data);
   public Object visit(ASTlogic_op node, Object data);
   public Object visit(ASTcomp_op node, Object data);
 }
-/* JavaCC - OriginalChecksum=5ab3b0eef0d512f9e5e7a296a8a15f5c (do not edit this line) */
+/* JavaCC - OriginalChecksum=17af41bf28371655a22e41ef09d08078 (do not edit this line) */

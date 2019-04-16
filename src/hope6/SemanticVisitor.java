@@ -115,7 +115,51 @@ public class SemanticVisitor implements HOPE6Visitor {
    }
 
    public Object visit (ASTexpression node, Object data) {
-      return node.childrenAccept(this, data);
+      if(node.jjtGetNumChildren() == 1) {
+         return node.jjtGetChild(0).jjtAccept(this, data);
+      }
+      else {
+         SimpleNode arg1 = (SimpleNode) node.jjtGetChild(0);
+         String type1 = arg1.toString();
+         if(type1.equals("fragment")) {
+            arg1 = (SimpleNode) arg1.jjtGetChild(0);
+            type1 = arg1.toString();
+         }
+         String id1 = "";
+
+         if(type1.equals("rhs_identifier")) {
+            id1 = (String) arg1.value;
+            type1 = st.getType(scope, id1);
+         }
+         else if(type1.equals("integer") || type1.equals("boolean")) {
+            id1 = (String) arg1.value;
+         }
+
+         SimpleNode arg2 = (SimpleNode) node.jjtGetChild(2);
+         String type2 = arg2.toString();
+         if(type2.equals("fragment")) {
+            arg2 = (SimpleNode) arg2.jjtGetChild(0);
+            type2 = arg2.toString();
+         }
+         String id2 = "";
+
+         if(type2.equals("rhs_identifier")) {
+            id2 = (String) arg2.value;
+            type2 = st.getType(scope, id2);
+         }
+         else if(type2.equals("integer") || type2.equals("boolean")) {
+            id2 = (String) arg2.value;
+         }
+
+         if(type1.equals("integer") && !type2.equals("integer")) {
+            arithmeticOnIntegers = false;
+         }
+         else if(type1.equals("boolean") && !type2.equals("boolean")) {
+            logicOnBooleans = false;
+         }
+
+         return node.childrenAccept(this, data);
+      }
    }
 
    public Object visit (ASTcondition node, Object data) {
@@ -270,72 +314,8 @@ public class SemanticVisitor implements HOPE6Visitor {
       return node.jjtGetChild(0).jjtAccept(this, data);
    }
 
-   public Object visit (ASTbinary_arith_op node, Object data) {
-      SimpleNode arg1 = (SimpleNode) node.jjtGetParent().jjtGetChild(0);
-      String type1 = arg1.toString();
-      if(type1.equals("fragment")) {
-         arg1 = (SimpleNode) arg1.jjtGetChild(0);
-         type1 = arg1.toString();
-      }
-      String id1 = "";
-
-      if(type1.equals("rhs_identifier") || type1.equals("integer")) {
-         id1 = (String) arg1.value;
-         type1 = st.getType(scope, id1);
-      }
-      else if(type1.equals("integer")) {
-         id1 = (String) arg1.value;
-      }
-
-      SimpleNode child2 = (SimpleNode) node.jjtGetChild(1).jjtGetChild(0);
-      String type2 = child2.toString();
-      if(type2.equals("fragment")) {
-         child2 = (SimpleNode) child2.jjtGetChild(0);
-         type2 = child2.toString();
-      }
-      String id2 = "";
-
-      if(type2.equals("rhs_identifier")) {
-         id2 = (String) child2.value;
-         type2 = st.getType(scope, id2);
-      }
-      else if(type2.equals("integer")) {
-         id2 = (String) child2.value;
-      }
-
-      if(!type1.equals("integer") || !type2.equals("integer")) {
-         arithmeticOnIntegers = false;
-      }
-
-      return node.childrenAccept(this, data);
-   }
-
    public Object visit (ASTarith_op node, Object data) {
       return DataType.ArithOp;
-   }
-
-   public Object visit (ASTbinary_logic_op node, Object data) {
-      SimpleNode arg1 = (SimpleNode) node.jjtGetParent().jjtGetChild(0);
-      String type1 = arg1.toString();
-
-      if(type1.equals("rhs_identifier")) {
-         String id = (String) arg1.value;
-         type1 = st.getType(scope, id);
-      }
-
-      SimpleNode child2 = (SimpleNode) node.jjtGetChild(0).jjtGetChild(0);
-      String type2 = child2.toString();
-
-      if(type2.equals("rhs_identifier")) {
-         String id = (String) child2.value;
-         type2 = st.getType(scope, id);
-      }
-
-      if(!type1.equals("boolean") || !type2.equals("boolean")) {
-         logicOnBooleans = false;
-      }
-
-      return node.childrenAccept(this, data);
    }
 
    public Object visit (ASTlogic_op node, Object data) {

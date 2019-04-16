@@ -62,12 +62,14 @@ public class SymbolTable {
       while (e.hasMoreElements()) { // while symbol table not empty
          currentScope = (String) e.nextElement();
          scope = st.get(currentScope);
-         System.out.println("Scope: " + currentScope);
-         for(int i = 0; i < scope.size(); i++) { // for each identifier within a scope
-            key = scope.get(i) + currentScope;
-            System.out.println("Declaration Type= " + declTypes.get(scope.get(i)) + ", Identifier= " + scope.get(i) + ", Variable/Return Type= " + types.get(key));
+         if(!scope.isEmpty()) {
+            System.out.println("Scope: " + currentScope);
+            for(int i = 0; i < scope.size(); i++) { // for each identifier within a scope
+               key = scope.get(i) + currentScope;
+               System.out.println("Declaration Type= " + declTypes.get(scope.get(i)) + ", Identifier= " + scope.get(i) + ", Variable/Return Type= " + types.get(key));
+            }
+            System.out.println();
          }
-         System.out.println();
       }
    }
 

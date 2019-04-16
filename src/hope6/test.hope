@@ -1,0 +1,9 @@
+int l;
+int b;
+int h;
+
+l = 3;
+b = 4;
+h = 5;
+
+print(l * b * h);
