@@ -60,9 +60,9 @@ public class PrintVisitor implements HOPE6Visitor {
          node.jjtGetChild(0).jjtAccept(this, data); // fragment
       }
       else {
-         for(int i = 0; (i + 2) < node.jjtGetNumChildren(); i++) {
+         for(int i = 0; i < node.jjtGetNumChildren(); i++) {
             if(i != 0) {
-               System.out.println(" ");
+               System.out.print(" ");
             }
             node.jjtGetChild(i).jjtAccept(this, data);
          }

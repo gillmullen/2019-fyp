@@ -1,9 +1,25 @@
-int l;
-int b;
-int h;
+def int fibonacci(int N) {
+   int num1;
+   int num2;
+   int fib;
+   int i;
 
-l = 3;
-b = 4;
-h = 5;
+   num1 = 0;
+   num2 = 1;
+   i = 0;
 
-print(l * b * h);
+   while(i < N) {
+      fib = num1 + num2;
+      num1 = num2;
+      num2 = fib;
+      i = i + 1;
+   }
+
+   return (fib);
+}
+
+main {
+   int f;
+   f = fibonacci(7);
+   print(f);
+}

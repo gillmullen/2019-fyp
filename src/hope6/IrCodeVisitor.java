@@ -240,9 +240,20 @@ public class IrCodeVisitor implements HOPE6Visitor {
             Context context = (Context) data;
             BufferedWriter buffer = context.buffer;
             String command = "";
+            String prevResult = "";
+
+            if(i != 0) {
+               prevResult = result;
+            }
 
             result = getTmp();
-            String arg1 = (String) node.jjtGetChild(i).jjtAccept(this, data);
+            String arg1;
+            if(i == 0) {
+               arg1 = (String) node.jjtGetChild(i).jjtAccept(this, data);
+            }
+            else {
+               arg1 = prevResult;
+            }
             String op = (String) node.jjtGetChild(i + 1).jjtAccept(this, data);
             String arg2 = (String) node.jjtGetChild(i + 2).jjtAccept(this, data);
 
@@ -315,7 +326,7 @@ public class IrCodeVisitor implements HOPE6Visitor {
       else if(op.equals(">=")) {
          symOp = "sge";
       }
-      else if(op.equals(">")) {
+      else if(op.equals("<")) {
          symOp = "slt";
       }
       else {
