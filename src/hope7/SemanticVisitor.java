@@ -128,8 +128,18 @@ public class SemanticVisitor implements HOPE7Visitor {
 
    public Object visit (ASTassignment node, Object data) {
       SimpleNode child1 = (SimpleNode) node.jjtGetChild(0);
-      String id = (String) child1.value;
-      String type1 = st.getType(scope, id);
+      String child1Type = child1.toString();
+
+      String id, type1;
+      if(child1Type.equals("lhs_identifier")) {
+         id = (String) child1.value;
+         type1 = st.getType(scope, id);
+      }
+      else {
+         child1 = (SimpleNode) child1.jjtGetChild(0);
+         id = (String) child1.value;
+         type1 = st.getType(scope, id);
+      }
 
       SimpleNode child2 = (SimpleNode) node.jjtGetChild(1).jjtGetChild(0);
       String type2 = child2.toString();
@@ -170,6 +180,13 @@ public class SemanticVisitor implements HOPE7Visitor {
          else {
             type2 = "string[]";
          }
+      }
+
+      if(type1.equals("int[]") && type2.equals("integer")) {
+         type1 = "integer";
+      }
+      else if(type1.equals("string[]") && type2.equals("string")) {
+         type1 = "string";
       }
 
       if(!type1.equals(type2)) {
@@ -291,8 +308,16 @@ public class SemanticVisitor implements HOPE7Visitor {
             System.out.println("Fail: Array of Type " + arrayType + "[] Contains Element of Type " + type + "!");
          }
       }
-      
+
       return node.childrenAccept(this, data);
+   }
+
+   public Object visit(ASTarray_index node, Object data) {
+      return node.childrenAccept(this, data);
+   }
+
+   public Object visit(ASTindex node, Object data) {
+      return DataType.Integer;
    }
 
    public Object visit (ASTlhs_identifier node, Object data) {

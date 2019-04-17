@@ -215,6 +215,19 @@ public class PrintVisitor implements HOPE7Visitor {
       return data;
    }
 
+   public Object visit(ASTarray_index node, Object data) {
+      node.jjtGetChild(0).jjtAccept(this, data); // identifier
+      System.out.print("[ ");
+      node.jjtGetChild(1).jjtAccept(this, data); // index
+      System.out.print(" ]");
+      return data;
+   }
+
+   public Object visit(ASTindex node, Object data) {
+      System.out.print(node.value);
+      return data;
+   }
+
    public Object visit(ASTlhs_identifier node, Object data) {
       System.out.print(node.value);
       return data;

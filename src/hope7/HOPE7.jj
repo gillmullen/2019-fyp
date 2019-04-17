@@ -64,18 +64,18 @@ public class HOPE7/*@bgen(jjtree)*/implements HOPE7TreeConstants/*@egen*/ {/*@bg
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         System.out.println("\nWriting LLVM code to: " + irFileName);
-
-         try {
-            Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
-            IrCodeVisitor irCode = new IrCodeVisitor();
-            root.jjtAccept(irCode, context);
-            context.buffer.flush();
-         }
-         catch (IOException e) {
-            System.out.println("Failed to write LLVM code to file");
-            e.printStackTrace(System.out);
-         }
+         // System.out.println("\nWriting LLVM code to: " + irFileName);
+         //
+         // try {
+         //    Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
+         //    IrCodeVisitor irCode = new IrCodeVisitor();
+         //    root.jjtAccept(irCode, context);
+         //    context.buffer.flush();
+         // }
+         // catch (IOException e) {
+         //    System.out.println("Failed to write LLVM code to file");
+         //    e.printStackTrace(System.out);
+         // }
       }
       catch(ParseException e) {
          System.out.println(e.getMessage());
@@ -455,7 +455,7 @@ void assignment() : {/*@bgen(jjtree) assignment */
 {/*@bgen(jjtree) assignment */
    try {
 /*@egen*/
-   lhs_identifier() <EQUALS> expression() <SEMIC>/*@bgen(jjtree)*/
+   ( LOOKAHEAD(2) array_index() | lhs_identifier() ) <EQUALS> expression() <SEMIC>/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -828,7 +828,7 @@ void fragment() : {/*@bgen(jjtree) fragment */
 {/*@bgen(jjtree) fragment */
    try {
 /*@egen*/
-   integer() | string() | bool() | array() | rhs_identifier()/*@bgen(jjtree)*/
+   LOOKAHEAD(2) array_index() | integer() | string() | bool() | array() | rhs_identifier()/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -921,7 +921,7 @@ void array() : {/*@bgen(jjtree) array */
   ASTarray jjtn000 = new ASTarray(JJTARRAY);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
-/*@egen*/ }
+/*@egen*/}
 {/*@bgen(jjtree) array */
    try {
 /*@egen*/
@@ -940,6 +940,59 @@ void array() : {/*@bgen(jjtree) array */
        throw (ParseException)jjte000;
      }
      throw (Error)jjte000;
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+   }
+/*@egen*/
+}
+
+void array_index() : {/*@bgen(jjtree) array_index */
+  ASTarray_index jjtn000 = new ASTarray_index(JJTARRAY_INDEX);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) array_index */
+   try {
+/*@egen*/
+   rhs_identifier() <LSB> index() <RSB>/*@bgen(jjtree)*/
+   } catch (Throwable jjte000) {
+     if (jjtc000) {
+       jjtree.clearNodeScope(jjtn000);
+       jjtc000 = false;
+     } else {
+       jjtree.popNode();
+     }
+     if (jjte000 instanceof RuntimeException) {
+       throw (RuntimeException)jjte000;
+     }
+     if (jjte000 instanceof ParseException) {
+       throw (ParseException)jjte000;
+     }
+     throw (Error)jjte000;
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+   }
+/*@egen*/
+}
+
+String index() : {/*@bgen(jjtree) index */
+                   ASTindex jjtn000 = new ASTindex(JJTINDEX);
+                   boolean jjtc000 = true;
+                   jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }
+{/*@bgen(jjtree) index */
+   try {
+/*@egen*/
+   ( t = <NUM> )/*@bgen(jjtree)*/
+                 {
+                   jjtree.closeNodeScope(jjtn000, true);
+                   jjtc000 = false;
+                 }
+/*@egen*/ { jjtn000.value = t.image; return t.image; }/*@bgen(jjtree)*/
    } finally {
      if (jjtc000) {
        jjtree.closeNodeScope(jjtn000, true);
