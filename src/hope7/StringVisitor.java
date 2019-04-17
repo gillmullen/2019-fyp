@@ -107,15 +107,6 @@ public class StringVisitor implements HOPE7Visitor {
       return data;
    }
 
-   public Object visit(ASTarray_index node, Object data) {
-      node.childrenAccept(this, data);
-      return data;
-   }
-
-   public Object visit(ASTindex node, Object data) {
-      return node.value;
-   }
-
    public Object visit(ASTassignment node, Object data) {
       int offset;
       Context context = (Context) data;

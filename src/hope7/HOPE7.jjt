@@ -60,18 +60,18 @@ public class HOPE7 {
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
 
-         // System.out.println("\nWriting LLVM code to: " + irFileName);
-         //
-         // try {
-         //    Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
-         //    IrCodeVisitor irCode = new IrCodeVisitor();
-         //    root.jjtAccept(irCode, context);
-         //    context.buffer.flush();
-         // }
-         // catch (IOException e) {
-         //    System.out.println("Failed to write LLVM code to file");
-         //    e.printStackTrace(System.out);
-         // }
+         System.out.println("\nWriting LLVM code to: " + irFileName);
+
+         try {
+            Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
+            IrCodeVisitor irCode = new IrCodeVisitor();
+            root.jjtAccept(irCode, context);
+            context.buffer.flush();
+         }
+         catch (IOException e) {
+            System.out.println("Failed to write LLVM code to file");
+            e.printStackTrace(System.out);
+         }
       }
       catch(ParseException e) {
          System.out.println(e.getMessage());
@@ -217,7 +217,7 @@ void statement() : {}
 
 void assignment() : {}
 {
-   ( LOOKAHEAD(2) array_index() | lhs_identifier() ) <EQUALS> expression() <SEMIC>
+   lhs_identifier() <EQUALS> expression() <SEMIC>
 }
 
 void declaration() : { String type; String id; }
@@ -277,7 +277,7 @@ void condition() : {}
 
 void fragment() : {}
 {
-   LOOKAHEAD(2) array_index() | integer() | string() | bool() | array() | rhs_identifier()
+   integer() | string() | bool() | array() | rhs_identifier()
 }
 
 void integer() : { Token t; }
@@ -295,19 +295,9 @@ void bool() : { Token t; }
    ( t = <TRUE> | t = <FALSE> ) { jjtThis.value = t.image; }
 }
 
-void array() : {}
+void array() : { }
 {
    <LSB> fragment() ( <COMMA> fragment() )* <RSB>
-}
-
-void array_index() : {}
-{
-   rhs_identifier() <LSB> index() <RSB>
-}
-
-String index() : { Token t; }
-{
-   ( t = <NUM> ) { jjtThis.value = t.image; return t.image; }
 }
 
 String lhs_identifier() : { Token t; }

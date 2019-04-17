@@ -684,12 +684,6 @@ public class IrCodeVisitor implements HOPE7Visitor {
       return array;
    }
 
-   public Object visit(ASTarray_index node, Object data);
-
-   public Object visit(ASTindex node, Object data) {
-      return node.value;
-   }
-
    public Object visit(ASTlhs_identifier node, Object data) {
       return node.value;
    }
