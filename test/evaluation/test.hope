@@ -1,5 +1,1 @@
-def int double(int a) {
-   return (a * 2);
-}
-
-print(double(5));
+print(3 * 4 / 2);
