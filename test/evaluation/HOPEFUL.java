@@ -3,6 +3,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
@@ -63,6 +65,23 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants, HOPEFULCon
             System.out.println("Failed to write LLVM code to file");
             e.printStackTrace(System.out);
          }
+
+         //System.out.println("\nExecuting LLVM Code");
+         //String command = "lli " + irFileName;
+//         try {
+  //          Process process = Runtime.getRuntime().exec(command);
+    //        BufferedReader br = new BufferedReader(
+       //     new InputStreamReader(process.getInputStream()));
+      //      String line;
+         //   while ((line = br.readLine()) != null) {
+           //    System.out.println(line);
+            //}
+        // }
+        // catch (IOException e) {
+          //  System.out.println("Failed to execute LLVM code");
+           // e.printStackTrace(System.out);
+         //}
+
       }
       catch(ParseException e) {
          System.out.println(e.getMessage());
@@ -1083,6 +1102,26 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants, HOPEFULCon
     finally { jj_save(1, xla); }
   }
 
+  static private boolean jj_3R_8() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_scan_token(NUM)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_7() {
     if (jj_3R_8()) return true;
     return false;
@@ -1148,26 +1187,6 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants, HOPEFULCon
 
   static private boolean jj_3R_11() {
     if (jj_3R_15()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_8() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14() {
-    if (jj_scan_token(NUM)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(ID)) return true;
     return false;
   }
 
