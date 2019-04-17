@@ -66,21 +66,21 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants, HOPEFULCon
             e.printStackTrace(System.out);
          }
 
-         //System.out.println("\nExecuting LLVM Code");
-         //String command = "lli " + irFileName;
-//         try {
-  //          Process process = Runtime.getRuntime().exec(command);
-    //        BufferedReader br = new BufferedReader(
-       //     new InputStreamReader(process.getInputStream()));
-      //      String line;
-         //   while ((line = br.readLine()) != null) {
-           //    System.out.println(line);
-            //}
-        // }
-        // catch (IOException e) {
-          //  System.out.println("Failed to execute LLVM code");
-           // e.printStackTrace(System.out);
-         //}
+         System.out.println("\u005cnExecuting LLVM Code");
+         String command = "lli " + irFileName;
+         try {
+            Process process = Runtime.getRuntime().exec(command);
+            BufferedReader br = new BufferedReader(
+            new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = br.readLine()) != null) {
+               System.out.println(line);
+            }
+         }
+         catch (IOException e) {
+            System.out.println("Failed to execute LLVM code");
+            e.printStackTrace(System.out);
+         }
 
       }
       catch(ParseException e) {
