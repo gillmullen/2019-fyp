@@ -40,46 +40,22 @@ public class SemanticVisitor implements HOPEFULVisitor {
       }
       existsDuplicateVar = st.existsDuplicate();
 
-      if (allVariablesReadFrom) {
-         System.out.println("Pass: All Variables Read From!");
-      }
-      else {
+      if (!allVariablesReadFrom) {
          System.out.println("Fail: Variable(s) " + variablesRead + " Not Read From!");
       }
-      if (allVariablesWrittenTo) {
-         System.out.println("Pass: All Variables Written To!");
-      }
-      else {
+      if (!allVariablesWrittenTo) {
          System.out.println("Fail: Variable(s) " + variablesWritten + " Not Written To!");
       }
-      if (declaredBeforeUse) {
-         System.out.println("Pass: All Variables and Functions Declared Before Use!");
-      }
-      if(!existsDuplicateVar) {
-         System.out.println("Pass: All Variables Declared Only Once!");
-      }
-      else {
+      if(existsDuplicateVar) {
          System.out.println("Fail: Duplicate Variables Defined!");
       }
-      if (allFuncsCalled) {
-         System.out.println("Pass: All Functions Called!");
-      }
-      else {
+      if (!allFuncsCalled) {
          System.out.println("Fail: Functions " + functions + " Called!");
       }
-      if (correctAssignmentType) {
-         System.out.println("Pass: All Variables Assigned Correct Type!");
-      }
-      if (arithmeticOnIntegers) {
-         System.out.println("Pass: Arithmetic Expressions on Integers Only!");
-      }
-      else {
+      if (!arithmeticOnIntegers) {
          System.out.println("Fail: Arithmetic Expressions on Non-Integers!");
       }
-      if (logicOnBooleans) {
-         System.out.println("Pass: Logic Expressions on Booleans Only!");
-      }
-      else {
+      if (!logicOnBooleans) {
          System.out.println("Fail: Logic Expressions on Non-Booleans!");
       }
 

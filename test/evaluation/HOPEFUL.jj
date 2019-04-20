@@ -52,21 +52,8 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants/*@egen*/ {/
       try{
          SimpleNode root = parser.program();
 
-         System.out.println("Abstract Syntax Tree:");
-         root.dump(">");
-
-         System.out.println("\nProgram:");
-         PrintVisitor pv = new PrintVisitor();
-         root.jjtAccept(pv, "");
-
-         System.out.println("\nSymbol Table:");
-         st.print();
-
-         System.out.println("Semantic Analysis:");
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
-
-         System.out.println("\nWriting LLVM code to: " + irFileName);
 
          try {
             Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
@@ -79,7 +66,6 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants/*@egen*/ {/
             e.printStackTrace(System.out);
          }
 
-         System.out.println("\nExecuting LLVM Code");
          String command = "lli " + irFileName;
          try {
             Process process = Runtime.getRuntime().exec(command);

@@ -39,21 +39,8 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants, HOPEFULCon
       try{
          SimpleNode root = parser.program();
 
-         System.out.println("Abstract Syntax Tree:");
-         root.dump(">");
-
-         System.out.println("\u005cnProgram:");
-         PrintVisitor pv = new PrintVisitor();
-         root.jjtAccept(pv, "");
-
-         System.out.println("\u005cnSymbol Table:");
-         st.print();
-
-         System.out.println("Semantic Analysis:");
          SemanticVisitor sv = new SemanticVisitor();
          root.jjtAccept(sv, st);
-
-         System.out.println("\u005cnWriting LLVM code to: " + irFileName);
 
          try {
             Context context = new Context (new BufferedWriter (new FileWriter (irFileName)), new ArrayList<DeclaredStrings> ());
@@ -66,7 +53,6 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants, HOPEFULCon
             e.printStackTrace(System.out);
          }
 
-         System.out.println("\u005cnExecuting LLVM Code");
          String command = "lli " + irFileName;
          try {
             Process process = Runtime.getRuntime().exec(command);
@@ -1102,43 +1088,6 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants, HOPEFULCon
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_3R_8() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14() {
-    if (jj_scan_token(NUM)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_7() {
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_5() {
-    if (jj_3R_6()) return true;
-    if (jj_scan_token(LBR)) return true;
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_3R_5()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_12() {
     if (jj_3R_16()) return true;
     return false;
@@ -1187,6 +1136,43 @@ public class HOPEFUL/*@bgen(jjtree)*/implements HOPEFULTreeConstants, HOPEFULCon
 
   static private boolean jj_3R_11() {
     if (jj_3R_15()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_8() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_scan_token(NUM)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_13() {
+    if (jj_3R_6()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_6() {
+    if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_5() {
+    if (jj_3R_6()) return true;
+    if (jj_scan_token(LBR)) return true;
+    if (jj_3R_7()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_1() {
+    if (jj_3R_5()) return true;
     return false;
   }
 
