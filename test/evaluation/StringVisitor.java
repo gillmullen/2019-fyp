@@ -103,21 +103,23 @@ public class StringVisitor implements HOPEFULVisitor {
    }
 
    public Object visit(ASTassignment node, Object data) {
-      int offset;
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       ArrayList<DeclaredStrings> strings = context.strings;
 
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String type = symbolTable.getSymbol(scope, id);
+      int offset;
 
       if(type.equals("i8*")) {
-         id = id + ".0";
+         id += ".0";
          while(containsString(strings, id)) {
             offset = id.lastIndexOf(".");
             id = id.substring(0, offset + 1) +
             Integer.toString((Integer.parseInt(id.substring(offset+1,id.length())))+1,10);
          }
+         String expr = (String) node.jjtGetChild(1).jjtGetChild(0).jjtAccept(this, data);
+         strings.add(new DeclaredStrings(id, expr));
       }
       return data;
    }
@@ -130,6 +132,22 @@ public class StringVisitor implements HOPEFULVisitor {
    }
 
    public Object visit(ASTprint node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+      ArrayList<DeclaredStrings> strings = context.strings;
+      String expr = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
+      int offset;
+
+      if(expr.charAt(0) == '"') {
+         String id = "print.";
+         id += ".0";
+         while(containsString(strings, id)) {
+            offset = id.lastIndexOf(".");
+            id = id.substring(0, offset + 1) +
+            Integer.toString((Integer.parseInt(id.substring(offset+1,id.length())))+1,10);
+         }
+         strings.add(new DeclaredStrings(id, expr));
+      }
       return data;
    }
 
