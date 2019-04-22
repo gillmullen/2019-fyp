@@ -155,7 +155,7 @@ public class SemanticVisitor implements HOPEFULVisitor {
          type2 = st.getType(scope, id);
       }
 
-      if(!type1.equals("integer") && !type2.equals("integer")) {
+      if(type1.equals("integer") && !type2.equals("integer")) {
          arithmeticOnIntegers = false;
       }
 

@@ -152,10 +152,12 @@ public class StringVisitor implements HOPEFULVisitor {
    }
 
    public Object visit(ASTif_statement node, Object data) {
+      node.childrenAccept(this, data);
       return data;
    }
 
    public Object visit(ASTwhile_loop node, Object data) {
+      node.childrenAccept(this, data);
       return data;
    }
 

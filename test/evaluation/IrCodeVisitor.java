@@ -25,8 +25,8 @@ public class IrCodeVisitor implements HOPEFULVisitor {
    }
 
    static ArrayList<DeclaredStrings> generateStrings(SimpleNode root, Object data) {
-      StringVisitor sv = new StringVisitor ();
-      root.jjtAccept (sv, data);
+      StringVisitor sv = new StringVisitor();
+      root.jjtAccept(sv, data);
       return ((Context) data).strings;
    }
 
@@ -469,7 +469,7 @@ public class IrCodeVisitor implements HOPEFULVisitor {
       int length;
 
       String result = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      if(result.charAt(0) == '"') {
+      if(result.charAt(0) == '"') { // if literal string
          ListIterator li = context.strings.listIterator();
          var = "";
          while(li.hasNext()) {
@@ -486,11 +486,19 @@ public class IrCodeVisitor implements HOPEFULVisitor {
          result = tmp;
          command = command + "call i32 @puts (i8* ";
       }
-      else {
-         if(registerTypes.get(result).equals("i8*")) {
+      else if(result.matches("-?\\d+")) {
+         command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
+         command = command + "i32  0, i32 0), i32 ";
+      }
+      else if(result.equals("true") || result.equals("false")) {
+         command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
+         command = command + "i1  0, i1 0), i1 ";
+      }
+      else { // if variable
+         if(registerTypes.get(result).equals("i8*")) { // if string variable
             command = "call i32 @puts(i8* ";
          }
-         else {
+         else { // if other variable type
             command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
             command = command + registerTypes.get(result) + " 0, " + registerTypes.get(result) + " 0), " + registerTypes.get(result) + " ";
          }
