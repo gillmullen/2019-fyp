@@ -159,7 +159,17 @@ public class PrintVisitor implements HOPE7Visitor {
    }
 
    public Object visit(ASTexpression node, Object data) {
-      node.childrenAccept(this, data);
+      if (node.jjtGetNumChildren() == 1) {
+         node.jjtGetChild(0).jjtAccept(this, data); // fragment
+      }
+      else {
+         for(int i = 0; i < node.jjtGetNumChildren(); i++) {
+            if(i != 0) {
+               System.out.print(" ");
+            }
+            node.jjtGetChild(i).jjtAccept(this, data);
+         }
+      }
       return data;
    }
 
@@ -230,24 +240,8 @@ public class PrintVisitor implements HOPE7Visitor {
       return data;
    }
 
-   public Object visit(ASTbinary_arith_op node, Object data) {
-      System.out.print(" ");
-      node.jjtGetChild(0).jjtAccept(this, data); // op
-      System.out.print(" ");
-      node.jjtGetChild(1).jjtAccept(this, data); // fragment
-      return data;
-   }
-
    public Object visit(ASTarith_op node, Object data) {
       System.out.print(node.value);
-      return data;
-   }
-
-   public Object visit(ASTbinary_logic_op node, Object data) {
-      System.out.print(" ");
-      node.jjtGetChild(0).jjtAccept(this, data); // op
-      System.out.print(" ");
-      node.jjtGetChild(1).jjtAccept(this, data); // fragment
       return data;
    }
 

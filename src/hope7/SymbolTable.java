@@ -119,7 +119,6 @@ public class SymbolTable {
 
    public String getSymbol(String scope, String id) {
       String type = types.get(id + scope);
-      System.out.println(types.toString());
       String mty;
       if(type.equals("integer") || type.equals("int")) {
          mty = "i32";

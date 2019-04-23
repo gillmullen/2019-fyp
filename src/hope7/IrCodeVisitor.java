@@ -61,6 +61,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
          System.out.println("Failed to write start of IR code to file");
          e.printStackTrace(System.out);
       }
+      return;
    }
 
    static void endIr(BufferedWriter buffer) {
@@ -74,6 +75,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
          System.out.println("Failed to write end of IR code to file");
          e.printStackTrace(System.out);
       }
+      return;
    }
 
    public Object visit(SimpleNode node, Object data) {
@@ -376,7 +378,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
       return node.value;
    }
 
-   public Object visit(ASTprint node, Object data) {
+   public Object visit (ASTprint node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       DeclaredStrings s;
@@ -384,7 +386,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
       int length;
 
       String result = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      if(result.charAt(0) == '"') {
+      if(result.charAt(0) == '"') { // if literal string
          ListIterator li = context.strings.listIterator();
          var = "";
          while(li.hasNext()) {
@@ -401,11 +403,19 @@ public class IrCodeVisitor implements HOPE7Visitor {
          result = tmp;
          command = command + "call i32 @puts (i8* ";
       }
-      else {
-         if(registerTypes.get(result).equals("i8*")) {
+      else if(result.matches("-?\\d+")) {
+         command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
+         command = command + "i32  0, i32 0), i32 ";
+      }
+      else if(result.equals("true") || result.equals("false")) {
+         command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
+         command = command + "i1  0, i1 0), i1 ";
+      }
+      else { // if variable
+         if(registerTypes.get(result).equals("i8*")) { // if string variable
             command = "call i32 @puts(i8* ";
          }
-         else {
+         else { // if other variable type
             command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
             command = command + registerTypes.get(result) + " 0, " + registerTypes.get(result) + " 0), " + registerTypes.get(result) + " ";
          }
@@ -417,11 +427,10 @@ public class IrCodeVisitor implements HOPE7Visitor {
          buffer.write(")");
          buffer.newLine();
       }
-      catch(IOException e) {
+      catch (IOException e) {
          System.out.println("Failed to write IR code for print statement to file");
-         e.printStackTrace(System.out);
+         e.printStackTrace (System.out);
       }
-
       return data;
    }
 
@@ -585,8 +594,65 @@ public class IrCodeVisitor implements HOPE7Visitor {
          result = (String) node.jjtGetChild(0).jjtAccept(this, data); // fragment
       }
       else {
-         node.jjtGetChild(0).jjtAccept(this, data); // fragment
-         result = (String) node.jjtGetChild(1).jjtAccept(this, data); // binary op
+         for(int i = 0; (i + 2) < node.jjtGetNumChildren(); i += 2) {
+            Context context = (Context) data;
+            BufferedWriter buffer = context.buffer;
+            String command = "";
+            String prevResult = "";
+
+            if(i != 0) {
+               prevResult = result;
+            }
+
+            result = getTmp();
+            String arg1;
+            if(i == 0) {
+               arg1 = (String) node.jjtGetChild(i).jjtAccept(this, data);
+            }
+            else {
+               arg1 = prevResult;
+            }
+            String op = (String) node.jjtGetChild(i + 1).jjtAccept(this, data);
+            String arg2 = (String) node.jjtGetChild(i + 2).jjtAccept(this, data);
+
+            if(op.equals("+")) {
+               registerTypes.put(result, "i32");
+               command = result + " = add i32 " + arg1 + ", " + arg2;
+            }
+            else if(op.equals("-")) {
+               registerTypes.put(result, "i32");
+               command = result + " = sub i32 " + arg1 + ", " + arg2;
+            }
+            else if(op.equals("*")) {
+               registerTypes.put(result, "i32");
+               command = result + " = mul i32 " + arg1 + ", " + arg2;
+            }
+            else if(op.equals("/")) {
+               registerTypes.put(result, "i32");
+               command = result + " = sdiv i32 " + arg1 + ", " + arg2;
+            }
+            else if(op.equals("%")) {
+               registerTypes.put(result, "i32");
+               command = result + " = urem i32 " + arg1 + ", " + arg2;
+            }
+            else if(op.equals("&")) {
+               registerTypes.put(result, "i1");
+               command = result + " = and i32 " + arg1 + ", " + arg2;
+            }
+            else {
+               registerTypes.put(result, "i1");
+               command = result + " = or i32 " + arg1 + ", " + arg2;
+            }
+
+            try {
+               buffer.write(command);
+               buffer.newLine();
+            }
+            catch (IOException e) {
+               System.out.println("Failed to write IR code of expression to file");
+               e.printStackTrace(System.out);
+            }
+         }
       }
       return result;
    }
@@ -721,79 +787,8 @@ public class IrCodeVisitor implements HOPE7Visitor {
       return node.value;
    }
 
-   public Object visit(ASTbinary_arith_op node, Object data) {
-      Context context = (Context) data;
-      BufferedWriter buffer = context.buffer;
-      String command = "";
-
-      String result = getTmp();
-      SimpleNode parent = (SimpleNode) node.jjtGetParent().jjtGetChild(0);
-      String arg1 = (String) parent.jjtAccept(this, data);
-      String op = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String arg2 = (String) node.jjtGetChild(1).jjtGetChild(0).jjtAccept(this, data);
-
-      if(op.equals("+")) {
-         registerTypes.put(result, "i32");
-         command = result + " = add i32 " + arg1 + ", " + arg2;
-      }
-      else if(op.equals("-")) {
-         registerTypes.put(result, "i32");
-         command = result + " = sub i32 " + arg1 + ", " + arg2;
-      }
-      else if(op.equals("*")) {
-         registerTypes.put(result, "i32");
-         command = result + " = mul i32 " + arg1 + ", " + arg2;
-      }
-      else {
-         registerTypes.put(result, "i32");
-         command = result + " = sdiv i32 " + arg1 + ", " + arg2;
-      }
-
-      try {
-         buffer.write(command);
-         buffer.newLine();
-      }
-      catch(IOException e) {
-         System.out.println("Failed to write IR code of expression to file");
-         e.printStackTrace(System.out);
-      }
-
-      return result;
-   }
-
    public Object visit(ASTarith_op node, Object data) {
       return node.value;
-   }
-
-   public Object visit(ASTbinary_logic_op node, Object data) {
-      Context context = (Context) data;
-      BufferedWriter buffer = context.buffer;
-      String command = "";
-      String result = getTmp();
-      SimpleNode parent = (SimpleNode) node.jjtGetParent();
-      String arg1 = (String) parent.jjtGetChild(0).jjtAccept(this, data);
-      String op = (String) node.jjtGetChild(0).jjtAccept(this, data);
-      String arg2 = (String) node.jjtGetChild(1).jjtAccept(this, data);
-
-      if(op.equals("&")) {
-         registerTypes.put(result, "i1");
-         command = result + " = and i1 " + arg1 + ", " + arg2;
-      }
-      else {
-         registerTypes.put(result, "i1");
-         command = result + " = or i1 " + arg1 + ", " + arg2;
-      }
-
-      try {
-         buffer.write(command);
-         buffer.newLine();
-      }
-      catch(IOException e) {
-         System.out.println("Failed to write IR code of expression to file");
-         e.printStackTrace(System.out);
-      }
-
-      return result;
    }
 
    public Object visit(ASTlogic_op node, Object data) {

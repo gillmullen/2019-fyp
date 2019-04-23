@@ -149,7 +149,8 @@ TOKEN : /* Punctuation */
    <LE : "<="> |
    <COMMA : ","> |
    <LSB : "["> |
-   <RSB : "]">
+   <RSB : "]"> |
+   <MOD : "%">
 }
 
 TOKEN : /* Numbers and identifiers */
@@ -283,7 +284,7 @@ void function() : {/*@bgen(jjtree) function */
    <DEF> retType = type() id = lhs_identifier() { if(retType.equals("int")) { retType = "integer"; } st.insertFunc(scope, id, retType, "FUNC"); scope = id; }
    <LBR> parameter_list() <RBR> <LCB>
    statement_block()
-   <RETURN> <LBR> ( expression() | {} ) <RBR> <SEMIC>
+   <RETURN> <LBR> expression() <RBR> <SEMIC>
    <RCB>/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
@@ -766,7 +767,7 @@ void expression() : {/*@bgen(jjtree) expression */
 {/*@bgen(jjtree) expression */
    try {
 /*@egen*/
-   LOOKAHEAD(3) function_call() | fragment() ( binary_arith_op() | binary_logic_op() )*/*@bgen(jjtree)*/
+   LOOKAHEAD(3) function_call() | fragment() ( ( arith_op() | logic_op() ) fragment() )*/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -1014,37 +1015,6 @@ String type() : {/*@bgen(jjtree) type */
 /*@egen*/
 }
 
-void binary_arith_op() : {/*@bgen(jjtree) binary_arith_op */
-                           ASTbinary_arith_op jjtn000 = new ASTbinary_arith_op(JJTBINARY_ARITH_OP);
-                           boolean jjtc000 = true;
-                           jjtree.openNodeScope(jjtn000);
-/*@egen*/ Token t; }
-{/*@bgen(jjtree) binary_arith_op */
-   try {
-/*@egen*/
-   arith_op() fragment()/*@bgen(jjtree)*/
-   } catch (Throwable jjte000) {
-     if (jjtc000) {
-       jjtree.clearNodeScope(jjtn000);
-       jjtc000 = false;
-     } else {
-       jjtree.popNode();
-     }
-     if (jjte000 instanceof RuntimeException) {
-       throw (RuntimeException)jjte000;
-     }
-     if (jjte000 instanceof ParseException) {
-       throw (ParseException)jjte000;
-     }
-     throw (Error)jjte000;
-   } finally {
-     if (jjtc000) {
-       jjtree.closeNodeScope(jjtn000, true);
-     }
-   }
-/*@egen*/
-}
-
 void arith_op() : {/*@bgen(jjtree) arith_op */
                     ASTarith_op jjtn000 = new ASTarith_op(JJTARITH_OP);
                     boolean jjtc000 = true;
@@ -1059,37 +1029,6 @@ void arith_op() : {/*@bgen(jjtree) arith_op */
                                                                               jjtc000 = false;
                                                                             }
 /*@egen*/ { jjtn000.value = t.image; }/*@bgen(jjtree)*/
-   } finally {
-     if (jjtc000) {
-       jjtree.closeNodeScope(jjtn000, true);
-     }
-   }
-/*@egen*/
-}
-
-void binary_logic_op() : {/*@bgen(jjtree) binary_logic_op */
-  ASTbinary_logic_op jjtn000 = new ASTbinary_logic_op(JJTBINARY_LOGIC_OP);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
-/*@egen*/}
-{/*@bgen(jjtree) binary_logic_op */
-   try {
-/*@egen*/
-   logic_op() fragment()/*@bgen(jjtree)*/
-   } catch (Throwable jjte000) {
-     if (jjtc000) {
-       jjtree.clearNodeScope(jjtn000);
-       jjtc000 = false;
-     } else {
-       jjtree.popNode();
-     }
-     if (jjte000 instanceof RuntimeException) {
-       throw (RuntimeException)jjte000;
-     }
-     if (jjte000 instanceof ParseException) {
-       throw (ParseException)jjte000;
-     }
-     throw (Error)jjte000;
    } finally {
      if (jjtc000) {
        jjtree.closeNodeScope(jjtn000, true);

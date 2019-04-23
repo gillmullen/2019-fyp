@@ -77,17 +77,19 @@ public interface HOPE7Constants {
   /** RegularExpression Id. */
   int RSB = 46;
   /** RegularExpression Id. */
-  int NUM = 47;
+  int MOD = 47;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 48;
+  int NUM = 48;
   /** RegularExpression Id. */
-  int ID = 49;
+  int INTEGER_LITERAL = 49;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 50;
+  int ID = 50;
   /** RegularExpression Id. */
-  int LETTER = 51;
+  int STRING_LITERAL = 51;
   /** RegularExpression Id. */
-  int OTHER = 52;
+  int LETTER = 52;
+  /** RegularExpression Id. */
+  int OTHER = 53;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -145,6 +147,7 @@ public interface HOPE7Constants {
     "\",\"",
     "\"[\"",
     "\"]\"",
+    "\"%\"",
     "<NUM>",
     "<INTEGER_LITERAL>",
     "<ID>",

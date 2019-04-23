@@ -29,11 +29,9 @@ public interface HOPE7TreeConstants
   public int JJTLHS_IDENTIFIER = 25;
   public int JJTRHS_IDENTIFIER = 26;
   public int JJTTYPE = 27;
-  public int JJTBINARY_ARITH_OP = 28;
-  public int JJTARITH_OP = 29;
-  public int JJTBINARY_LOGIC_OP = 30;
-  public int JJTLOGIC_OP = 31;
-  public int JJTCOMP_OP = 32;
+  public int JJTARITH_OP = 28;
+  public int JJTLOGIC_OP = 29;
+  public int JJTCOMP_OP = 30;
 
 
   public String[] jjtNodeName = {
@@ -65,11 +63,9 @@ public interface HOPE7TreeConstants
     "lhs_identifier",
     "rhs_identifier",
     "type",
-    "binary_arith_op",
     "arith_op",
-    "binary_logic_op",
     "logic_op",
     "comp_op",
   };
 }
-/* JavaCC - OriginalChecksum=9fad8808017010dcfa2301bdac48d473 (do not edit this line) */
+/* JavaCC - OriginalChecksum=7f6d0759b0a43f8bf9240b35541721a9 (do not edit this line) */

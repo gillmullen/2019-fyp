@@ -108,13 +108,13 @@ public class StringVisitor implements HOPE7Visitor {
    }
 
    public Object visit(ASTassignment node, Object data) {
-      int offset;
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       ArrayList<DeclaredStrings> strings = context.strings;
 
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String type = symbolTable.getSymbol(scope, id);
+      int offset;
 
       if(type.equals("i8*")) {
          id = id + ".0";
@@ -123,6 +123,8 @@ public class StringVisitor implements HOPE7Visitor {
             id = id.substring(0, offset + 1) +
             Integer.toString((Integer.parseInt(id.substring(offset+1,id.length())))+1,10);
          }
+         String expr = (String) node.jjtGetChild(1).jjtGetChild(0).jjtAccept(this, data);
+         strings.add(new DeclaredStrings(id, expr));
       }
       return data;
    }
@@ -147,14 +149,32 @@ public class StringVisitor implements HOPE7Visitor {
    }
 
    public Object visit(ASTprint node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+      ArrayList<DeclaredStrings> strings = context.strings;
+      String expr = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
+      int offset;
+
+      if(expr.charAt(0) == '"') {
+         String id = "print.";
+         id += ".0";
+         while(containsString(strings, id)) {
+            offset = id.lastIndexOf(".");
+            id = id.substring(0, offset + 1) +
+            Integer.toString((Integer.parseInt(id.substring(offset+1,id.length())))+1,10);
+         }
+         strings.add(new DeclaredStrings(id, expr));
+      }
       return data;
    }
 
    public Object visit(ASTif_statement node, Object data) {
+      node.childrenAccept(this, data);
       return data;
    }
 
    public Object visit(ASTwhile_loop node, Object data) {
+      node.childrenAccept(this, data);
       return data;
    }
 
@@ -192,18 +212,8 @@ public class StringVisitor implements HOPE7Visitor {
       return data;
    }
 
-   public Object visit(ASTbinary_arith_op node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
-      return data;
-   }
-
    public Object visit(ASTarith_op node, Object data) {
       return node.value;
-   }
-
-   public Object visit(ASTbinary_logic_op node, Object data) {
-      node.jjtGetChild(0).jjtAccept(this, data);
-      return data;
    }
 
    public Object visit(ASTlogic_op node, Object data) {

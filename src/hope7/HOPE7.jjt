@@ -145,7 +145,8 @@ TOKEN : /* Punctuation */
    <LE : "<="> |
    <COMMA : ","> |
    <LSB : "["> |
-   <RSB : "]">
+   <RSB : "]"> |
+   <MOD : "%">
 }
 
 TOKEN : /* Numbers and identifiers */
@@ -185,7 +186,7 @@ void function() : { String id; String retType; }
    <DEF> retType = type() id = lhs_identifier() { if(retType.equals("int")) { retType = "integer"; } st.insertFunc(scope, id, retType, "FUNC"); scope = id; }
    <LBR> parameter_list() <RBR> <LCB>
    statement_block()
-   <RETURN> <LBR> ( expression() | {} ) <RBR> <SEMIC>
+   <RETURN> <LBR> expression() <RBR> <SEMIC>
    <RCB>
 }
 
@@ -267,7 +268,7 @@ void argument() : {}
 
 void expression() : {}
 {
-   LOOKAHEAD(3) function_call() | fragment() ( binary_arith_op() | binary_logic_op() )*
+   LOOKAHEAD(3) function_call() | fragment() ( ( arith_op() | logic_op() ) fragment() )*
 }
 
 void condition() : {}
@@ -315,19 +316,9 @@ String type() : { Token t; }
    ( t = <INT> | t = <STRING> | t = <BOOL> ) { jjtThis.value = t.image; return t.image; }
 }
 
-void binary_arith_op() : { Token t; }
-{
-   arith_op() fragment()
-}
-
 void arith_op() : { Token t; }
 {
    ( t = <PLUS_SIGN> | t = <MINUS_SIGN> | t = <MUL_SIGN> | t = <DIV_SIGN> ) { jjtThis.value = t.image; }
-}
-
-void binary_logic_op() : {}
-{
-   logic_op() fragment()
 }
 
 void logic_op() : { Token t; }

@@ -1,3 +1,10 @@
-int[3] arr;
-arr = [1,2,3];
-print(arr);
+def int double(int a) {
+   return (a * 2);
+}
+
+main {
+   int n;
+   n = double(2); // result = 4
+   print(n);
+} 
+
