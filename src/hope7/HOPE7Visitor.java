@@ -27,6 +27,7 @@ public interface HOPE7Visitor
   public Object visit(ASTstring node, Object data);
   public Object visit(ASTbool node, Object data);
   public Object visit(ASTarray node, Object data);
+  public Object visit(ASTarray_index node, Object data);
   public Object visit(ASTlhs_identifier node, Object data);
   public Object visit(ASTrhs_identifier node, Object data);
   public Object visit(ASTtype node, Object data);
@@ -34,4 +35,4 @@ public interface HOPE7Visitor
   public Object visit(ASTlogic_op node, Object data);
   public Object visit(ASTcomp_op node, Object data);
 }
-/* JavaCC - OriginalChecksum=cf121aa2e4a19e01c18b757aa9bb87f7 (do not edit this line) */
+/* JavaCC - OriginalChecksum=c77d4d935ee1c49eb197dd500c7e74a3 (do not edit this line) */

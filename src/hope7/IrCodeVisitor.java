@@ -360,7 +360,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
       else {
          mty = "i8*";
       }
-      String command = "%.p." + id + " = alloca " + "[" + size + " x " + mty + "]";
+      String command = "%.p." + id + " = alloca " + "<" + size + " x " + mty + ">";
 
       try {
          buffer.write(command);
@@ -722,7 +722,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
    }
 
    public Object visit(ASTarray node, Object data) {
-      String array = "[";
+      String array = "<";
       SimpleNode child1 = (SimpleNode) node.jjtGetChild(0).jjtGetChild(0);
       String type = child1.toString();
 
@@ -746,8 +746,40 @@ public class IrCodeVisitor implements HOPE7Visitor {
             array += registerTypes.get(value) + " " + value;
          }
       }
-      array += "]";
+      array += ">";
       return array;
+   }
+
+   public Object visit(ASTarray_index node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+
+      String tmp = getTmp();
+      String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
+      String index = (String) node.jjtGetChild(1).jjtAccept(this, data);
+      String arrayType = symbolTable.getType(scope, id);
+      String arraySize = symbolTable.getArraySize(scope, id);
+
+      if(arrayType.equals("int[]")) {
+         arrayType = "i32";
+      }
+      else {
+         arrayType = "i8*";
+      }
+
+      String command = tmp + " = getelementptr " +  arrayType + ", " + "<" + arraySize + " x " + arrayType + ">* " + "%" + id + ", "  + arrayType + " " + index;
+      registerTypes.put(tmp, arrayType);
+
+      try {
+         buffer.write(command);
+         buffer.newLine();
+      }
+      catch(IOException e) {
+         System.out.println("Failed to write IR code for RHS identifier to file");
+         e.printStackTrace(System.out);
+      }
+
+      return tmp;
    }
 
    public Object visit(ASTlhs_identifier node, Object data) {
@@ -764,9 +796,13 @@ public class IrCodeVisitor implements HOPE7Visitor {
       if(symbolTable.getDeclType(id).equals("FUNC")) {
          return id;
       }
+      else if(symbolTable.getType(scope, id).equals("int[]") || symbolTable.getType(scope, id).equals("string[]")) {
+         return id;
+      }
       else {
          type = symbolTable.getSymbol(scope, id);
       }
+
       String tmp = getTmp();
       String command = tmp + " = " + "load " + type + ", " + type + "* %.p." + id;
       registerTypes.put(tmp,type);

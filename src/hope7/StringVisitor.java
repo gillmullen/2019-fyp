@@ -107,6 +107,11 @@ public class StringVisitor implements HOPE7Visitor {
       return data;
    }
 
+   public Object visit(ASTarray_index node, Object data) {
+      node.childrenAccept(this, data);
+      return data;
+   }
+
    public Object visit(ASTassignment node, Object data) {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
@@ -152,19 +157,25 @@ public class StringVisitor implements HOPE7Visitor {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
       ArrayList<DeclaredStrings> strings = context.strings;
-      String expr = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
-      int offset;
 
-      if(expr.charAt(0) == '"') {
-         String id = "print.";
-         id += ".0";
-         while(containsString(strings, id)) {
-            offset = id.lastIndexOf(".");
-            id = id.substring(0, offset + 1) +
-            Integer.toString((Integer.parseInt(id.substring(offset+1,id.length())))+1,10);
+      try {
+         String expr = (String) node.jjtGetChild(0).jjtGetChild(0).jjtAccept(this, data);
+         int offset;
+         if(expr.charAt(0) == '"') {
+            String id = "print.";
+            id += ".0";
+            while(containsString(strings, id)) {
+               offset = id.lastIndexOf(".");
+               id = id.substring(0, offset + 1) +
+               Integer.toString((Integer.parseInt(id.substring(offset+1,id.length())))+1,10);
+            }
+            strings.add(new DeclaredStrings(id, expr));
          }
-         strings.add(new DeclaredStrings(id, expr));
       }
+      catch(ClassCastException e) {
+         int i = 0;
+      }
+
       return data;
    }
 

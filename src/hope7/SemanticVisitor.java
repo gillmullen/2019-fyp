@@ -17,6 +17,7 @@ public class SemanticVisitor implements HOPE7Visitor {
    private Boolean logicOnBooleans = true;
    private Boolean correctAssignmentType = true;
    private Boolean arrayElementsSameType = true;
+   private Boolean indexWithinBounds = true;
 
    public Object visit(SimpleNode node, Object data) {
       throw new RuntimeException("Visit SimpleNode");
@@ -86,6 +87,10 @@ public class SemanticVisitor implements HOPE7Visitor {
       if (arrayElementsSameType) {
          System.out.println("Pass: Array Elements are Same Type as Declared!");
       }
+      if (indexWithinBounds) {
+         System.out.println("Pass: All Indexs Within Bounds!");
+      }
+
 
       return DataType.Program;
    }
@@ -334,6 +339,24 @@ public class SemanticVisitor implements HOPE7Visitor {
             arrayElementsSameType = false;
             System.out.println("Fail: Array of Type " + arrayType + "[] Contains Element of Type " + type + "!");
          }
+      }
+
+      return node.childrenAccept(this, data);
+   }
+
+   public Object visit (ASTarray_index node, Object data) {
+      SimpleNode child1 = (SimpleNode) node.jjtGetChild(0);
+      String id = (String) child1.value;
+      String sizeStr = st.getArraySize(scope, id);
+      int size = Integer.parseInt(sizeStr);
+
+      SimpleNode child2 = (SimpleNode) node.jjtGetChild(1);
+      String indexStr = (String) child2.value;
+      int index = Integer.parseInt(indexStr);
+
+      if(index >= size && index < 0) {
+         System.out.println("Fail: Index " + index + " Not Within Bounds!");
+         indexWithinBounds = false;
       }
 
       return node.childrenAccept(this, data);

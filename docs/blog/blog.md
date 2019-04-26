@@ -66,5 +66,11 @@ My plans are to only evaluate up to the sixth sub-language, due to time constrai
 ## My Eleventh Blog Entry
 
 20/04/19<br/>
-There were delays this week, due to illness and the evaluation version of Hopeful and the enviroment not cooperating. Because of this, evluations is being pushed until after the bank holiday.<br/>
+There were delays this week, due to illness and the evaluation version of Hopeful and the enviroment not cooperating. Because of this, evaluations is being pushed until after the bank holiday.<br/>
 In the meantime, I will continue with getting the evaluation ready and then continue with the final IR.
+
+## My Twelvth Blog Entry
+
+26/04/19<br/>
+There was a lackluster turnout at the evaluations. This is because the email due for the Computing facility was not sent out in time due to my evaluation needing to be checked in accordance to data privacy regulations, once more. So, as of now, I have only a small response from Engineering students from my email, and Computing students from word of mouth. I will attempt to write up a report based on the feedback I already have, which was of good quality.<br/>
+Due to arrays proving more difficult than anticipated, I will move onto fixing bugs that came up during evaluation. I will also try to incorporate some suggestions I received during the evaluation.

@@ -130,12 +130,16 @@ public class SymbolTable {
          mty = "i8*";
       }
       else if(type.equals("int[]")) {
-         mty = "[" + arraySizes.get(id + scope) + " x i32]";
+         mty = "<" + arraySizes.get(id + scope) + " x i32>";
       }
       else {
-         mty = "[" + arraySizes.get(id + scope) + " x i8*]";
+         mty = "<" + arraySizes.get(id + scope) + " x i8*>";
       }
       return mty;
+   }
+
+   public String getArraySize(String scope, String id) {
+      return arraySizes.get(id + scope);
    }
 
    public LinkedList<String> getVariables() { // get all variables and constants

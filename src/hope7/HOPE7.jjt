@@ -43,7 +43,7 @@ public class HOPE7 {
          System.out.println("java HOPE7 inputfile");
       }
 
-      try{
+      try {
          SimpleNode root = parser.program();
 
          System.out.println("Abstract Syntax Tree:");
@@ -268,7 +268,7 @@ void argument() : {}
 
 void expression() : {}
 {
-   LOOKAHEAD(3) function_call() | fragment() ( ( arith_op() | logic_op() ) fragment() )*
+   LOOKAHEAD(3) function_call() | LOOKAHEAD(2) array_index() | fragment() ( ( arith_op() | logic_op() ) fragment() )*
 }
 
 void condition() : {}
@@ -299,6 +299,11 @@ void bool() : { Token t; }
 void array() : { }
 {
    <LSB> fragment() ( <COMMA> fragment() )* <RSB>
+}
+
+void array_index() : { }
+{
+   rhs_identifier() <LSB> integer() <RSB>
 }
 
 String lhs_identifier() : { Token t; }

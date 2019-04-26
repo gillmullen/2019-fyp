@@ -26,12 +26,13 @@ public interface HOPE7TreeConstants
   public int JJTSTRING = 22;
   public int JJTBOOL = 23;
   public int JJTARRAY = 24;
-  public int JJTLHS_IDENTIFIER = 25;
-  public int JJTRHS_IDENTIFIER = 26;
-  public int JJTTYPE = 27;
-  public int JJTARITH_OP = 28;
-  public int JJTLOGIC_OP = 29;
-  public int JJTCOMP_OP = 30;
+  public int JJTARRAY_INDEX = 25;
+  public int JJTLHS_IDENTIFIER = 26;
+  public int JJTRHS_IDENTIFIER = 27;
+  public int JJTTYPE = 28;
+  public int JJTARITH_OP = 29;
+  public int JJTLOGIC_OP = 30;
+  public int JJTCOMP_OP = 31;
 
 
   public String[] jjtNodeName = {
@@ -60,6 +61,7 @@ public interface HOPE7TreeConstants
     "string",
     "bool",
     "array",
+    "array_index",
     "lhs_identifier",
     "rhs_identifier",
     "type",
@@ -68,4 +70,4 @@ public interface HOPE7TreeConstants
     "comp_op",
   };
 }
-/* JavaCC - OriginalChecksum=7f6d0759b0a43f8bf9240b35541721a9 (do not edit this line) */
+/* JavaCC - OriginalChecksum=20da3ab7883be43da86cdbfc89228a3f (do not edit this line) */
