@@ -1,7 +1,1 @@
-def int square(int n) {
-	return n * n;
-}
-
-main {
-	print(square(2));
-}
+print(-2 + 3);

@@ -13,7 +13,9 @@ public class PrintVisitor implements HOPE7Visitor {
    }
 
    public Object visit(ASTmain node, Object data) {
+      System.out.println("main {");
       node.jjtGetChild(0).jjtAccept(this, data); // statement_block
+      System.out.println("}");
       return data;
    }
 

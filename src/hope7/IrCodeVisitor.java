@@ -663,7 +663,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
             }
             else if(op.equals("%")) {
                registerTypes.put(result, "i32");
-               command = result + " = urem i32 " + arg1 + ", " + arg2;
+               command = result + " = srem i32 " + arg1 + ", " + arg2;
             }
             else if(op.equals("&")) {
                registerTypes.put(result, "i1");
@@ -706,7 +706,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
          symOp = "eq";
       }
       else if(op.equals("!=")) {
-         symOp = "neq";
+         symOp = "ne";
       }
       else if(op.equals(">")) {
          symOp = "sgt";
