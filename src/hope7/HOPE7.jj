@@ -47,7 +47,7 @@ public class HOPE7/*@bgen(jjtree)*/implements HOPE7TreeConstants/*@egen*/ {/*@bg
          System.out.println("java HOPE7 inputfile");
       }
 
-      try{
+      try {
          SimpleNode root = parser.program();
 
          System.out.println("Abstract Syntax Tree:");
@@ -116,6 +116,7 @@ TOKEN [IGNORE_CASE] : /* Keywords */
     <INT : "int"> |
     <STRING : "string"> |
     <BOOL : "boolean"> |
+    <FLOAT : "float"> |
     <TRUE : "true"> |
     <FALSE : "false"> |
     <IF : "if"> |
@@ -150,12 +151,14 @@ TOKEN : /* Punctuation */
    <COMMA : ","> |
    <LSB : "["> |
    <RSB : "]"> |
-   <MOD : "%">
+   <MOD : "%"> |
+   <DOT : ".">
 }
 
 TOKEN : /* Numbers and identifiers */
 {
    <NUM : ("0" | <INTEGER_LITERAL>)> |
+   <FP : ("0" | <INTEGER_LITERAL>)"."(["0"-"9"])*> |
    <#INTEGER_LITERAL : ["1"-"9"](["0"-"9"])*> |
    <ID : <LETTER>(<LETTER> | <INTEGER_LITERAL> | "_")*> |
    <STRING_LITERAL : "\""(<LETTER> | <NUM> | " " | "'" | "!")* "\""> |
@@ -829,7 +832,7 @@ void fragment() : {/*@bgen(jjtree) fragment */
 {/*@bgen(jjtree) fragment */
    try {
 /*@egen*/
-   integer() | string() | bool() | array() | rhs_identifier()/*@bgen(jjtree)*/
+   integer() | floating_point() | string() | bool() | array() | rhs_identifier()/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -865,6 +868,28 @@ void integer() : {/*@bgen(jjtree) integer */
                     jjtree.closeNodeScope(jjtn000, true);
                     jjtc000 = false;
                   }
+/*@egen*/  { jjtn000.value = t.image; }/*@bgen(jjtree)*/
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+   }
+/*@egen*/
+}
+
+void floating_point() : {/*@bgen(jjtree) floating_point */
+                          ASTfloating_point jjtn000 = new ASTfloating_point(JJTFLOATING_POINT);
+                          boolean jjtc000 = true;
+                          jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }
+{/*@bgen(jjtree) floating_point */
+   try {
+/*@egen*/
+   ( t = <FP> )/*@bgen(jjtree)*/
+                 {
+                   jjtree.closeNodeScope(jjtn000, true);
+                   jjtc000 = false;
+                 }
 /*@egen*/  { jjtn000.value = t.image; }/*@bgen(jjtree)*/
    } finally {
      if (jjtc000) {
@@ -1032,11 +1057,11 @@ String type() : {/*@bgen(jjtree) type */
 {/*@bgen(jjtree) type */
    try {
 /*@egen*/
-   ( t = <INT> | t = <STRING> | t = <BOOL> )/*@bgen(jjtree)*/
-                                             {
-                                               jjtree.closeNodeScope(jjtn000, true);
-                                               jjtc000 = false;
-                                             }
+   ( t = <INT> | t = <FLOAT> | t = <STRING> | t = <BOOL> )/*@bgen(jjtree)*/
+                                                           {
+                                                             jjtree.closeNodeScope(jjtn000, true);
+                                                             jjtc000 = false;
+                                                           }
 /*@egen*/ { jjtn000.value = t.image; return t.image; }/*@bgen(jjtree)*/
    } finally {
      if (jjtc000) {

@@ -4,6 +4,7 @@ public enum DataType {
    Main,
    Func,
    Integer,
+   Float,
    String,
    Boolean,
    Id,

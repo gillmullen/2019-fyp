@@ -17,79 +17,85 @@ public interface HOPE7Constants {
   /** RegularExpression Id. */
   int BOOL = 16;
   /** RegularExpression Id. */
-  int TRUE = 17;
+  int FLOAT = 17;
   /** RegularExpression Id. */
-  int FALSE = 18;
+  int TRUE = 18;
   /** RegularExpression Id. */
-  int IF = 19;
+  int FALSE = 19;
   /** RegularExpression Id. */
-  int ELSE = 20;
+  int IF = 20;
   /** RegularExpression Id. */
-  int WHILE = 21;
+  int ELSE = 21;
   /** RegularExpression Id. */
-  int DEF = 22;
+  int WHILE = 22;
   /** RegularExpression Id. */
-  int MAIN = 23;
+  int DEF = 23;
   /** RegularExpression Id. */
-  int RETURN = 24;
+  int MAIN = 24;
   /** RegularExpression Id. */
-  int LBR = 25;
+  int RETURN = 25;
   /** RegularExpression Id. */
-  int RBR = 26;
+  int LBR = 26;
   /** RegularExpression Id. */
-  int SEMIC = 27;
+  int RBR = 27;
   /** RegularExpression Id. */
-  int PLUS_SIGN = 28;
+  int SEMIC = 28;
   /** RegularExpression Id. */
-  int MINUS_SIGN = 29;
+  int PLUS_SIGN = 29;
   /** RegularExpression Id. */
-  int MUL_SIGN = 30;
+  int MINUS_SIGN = 30;
   /** RegularExpression Id. */
-  int DIV_SIGN = 31;
+  int MUL_SIGN = 31;
   /** RegularExpression Id. */
-  int EQUALS = 32;
+  int DIV_SIGN = 32;
   /** RegularExpression Id. */
-  int OR = 33;
+  int EQUALS = 33;
   /** RegularExpression Id. */
-  int AND = 34;
+  int OR = 34;
   /** RegularExpression Id. */
-  int QUOTE = 35;
+  int AND = 35;
   /** RegularExpression Id. */
-  int LCB = 36;
+  int QUOTE = 36;
   /** RegularExpression Id. */
-  int RCB = 37;
+  int LCB = 37;
   /** RegularExpression Id. */
-  int EQ = 38;
+  int RCB = 38;
   /** RegularExpression Id. */
-  int NEQ = 39;
+  int EQ = 39;
   /** RegularExpression Id. */
-  int GT = 40;
+  int NEQ = 40;
   /** RegularExpression Id. */
-  int LT = 41;
+  int GT = 41;
   /** RegularExpression Id. */
-  int GE = 42;
+  int LT = 42;
   /** RegularExpression Id. */
-  int LE = 43;
+  int GE = 43;
   /** RegularExpression Id. */
-  int COMMA = 44;
+  int LE = 44;
   /** RegularExpression Id. */
-  int LSB = 45;
+  int COMMA = 45;
   /** RegularExpression Id. */
-  int RSB = 46;
+  int LSB = 46;
   /** RegularExpression Id. */
-  int MOD = 47;
+  int RSB = 47;
   /** RegularExpression Id. */
-  int NUM = 48;
+  int MOD = 48;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 49;
+  int DOT = 49;
   /** RegularExpression Id. */
-  int ID = 50;
+  int NUM = 50;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 51;
+  int FP = 51;
   /** RegularExpression Id. */
-  int LETTER = 52;
+  int INTEGER_LITERAL = 52;
   /** RegularExpression Id. */
-  int OTHER = 53;
+  int ID = 53;
+  /** RegularExpression Id. */
+  int STRING_LITERAL = 54;
+  /** RegularExpression Id. */
+  int LETTER = 55;
+  /** RegularExpression Id. */
+  int OTHER = 56;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -117,6 +123,7 @@ public interface HOPE7Constants {
     "\"int\"",
     "\"string\"",
     "\"boolean\"",
+    "\"float\"",
     "\"true\"",
     "\"false\"",
     "\"if\"",
@@ -148,7 +155,9 @@ public interface HOPE7Constants {
     "\"[\"",
     "\"]\"",
     "\"%\"",
+    "\".\"",
     "<NUM>",
+    "<FP>",
     "<INTEGER_LITERAL>",
     "<ID>",
     "<STRING_LITERAL>",

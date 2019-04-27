@@ -198,6 +198,11 @@ public class PrintVisitor implements HOPE7Visitor {
       return data;
    }
 
+   public Object visit(ASTfloating_point node, Object data) {
+      System.out.print(node.value);
+      return data;
+   }
+
    public Object visit(ASTstring node, Object data) {
       System.out.print(node.value);
       return data;

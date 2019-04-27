@@ -321,6 +321,9 @@ public class IrCodeVisitor implements HOPE7Visitor {
       if(type.equals("int")) {
          mty = "i32";
       }
+      else if(type.equals("float")) {
+         mty = type;
+      }
       else if(type.equals("bool") || type.equals("boolean")) {
          mty = "i1";
       }
@@ -407,9 +410,13 @@ public class IrCodeVisitor implements HOPE7Visitor {
          command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
          command = command + "i32  0, i32 0), i32 ";
       }
+      else if(result.matches("^(\\d+\\.)?\\d+$")) {
+         command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
+         command = command + "i32 0, i32 0), float ";
+      }
       else if(result.equals("true") || result.equals("false")) {
          command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
-         command = command + "i1  0, i1 0), i1 ";
+         command = command + "i32  0, i32 0), i1 ";
       }
       else { // if variable
          if(registerTypes.get(result).equals("i8*")) { // if string variable
@@ -417,7 +424,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
          }
          else { // if other variable type
             command = "call i32" + " (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, ";
-            command = command + registerTypes.get(result) + " 0, " + registerTypes.get(result) + " 0), " + registerTypes.get(result) + " ";
+            command = command + "i32 0, i32 0), " + registerTypes.get(result) + " ";
          }
       }
 
@@ -710,6 +717,10 @@ public class IrCodeVisitor implements HOPE7Visitor {
    }
 
    public Object visit(ASTinteger node, Object data) {
+      return node.value;
+   }
+
+   public Object visit(ASTfloating_point node, Object data) {
       return node.value;
    }
 

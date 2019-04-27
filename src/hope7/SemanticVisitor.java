@@ -154,6 +154,9 @@ public class SemanticVisitor implements HOPE7Visitor {
          if(type2.equals("bool")) {
             type2 = "boolean";
          }
+         else if(type2.equals("floating_point")) {
+            type2 = "float";
+         }
       }
       else {
          SimpleNode func = (SimpleNode) child2.jjtGetChild(0);
@@ -186,6 +189,8 @@ public class SemanticVisitor implements HOPE7Visitor {
          System.out.println(id + " Assigned " + child2.value + " " + node.jjtGetChild(1).jjtGetChild(0));
       }
 
+      variablesWritten.remove(id + scope);
+
       return node.childrenAccept(this, data);
    }
 
@@ -202,6 +207,18 @@ public class SemanticVisitor implements HOPE7Visitor {
    }
 
    public Object visit (ASTprint node, Object data) {
+      SimpleNode child = (SimpleNode) node.jjtGetChild(0).jjtGetChild(0);
+      String type = child.toString();
+      if(type.equals("fragment")) {
+         child = (SimpleNode) child.jjtGetChild(0);
+         type = child.toString();
+         if(type.equals("rhs_identifier")) {
+            String id = (String) child.value;
+            if(variablesWritten.contains(id + scope)) {
+               System.out.println("Fail: Variable " + id + " Not Written to Before Printing!");
+            }
+         }
+      }
       return node.jjtGetChild(0).jjtAccept(this, data);
    }
 
@@ -293,7 +310,7 @@ public class SemanticVisitor implements HOPE7Visitor {
          type2 = st.getType(scope, id);
       }
 
-      if(!type1.equals("integer") && !type2.equals("integer")) {
+      if(type1.equals("integer") && !type2.equals("integer")) {
          arithmeticOnIntegers = false;
       }
 
@@ -306,6 +323,10 @@ public class SemanticVisitor implements HOPE7Visitor {
 
    public Object visit (ASTinteger node, Object data) {
       return DataType.Integer;
+   }
+
+   public Object visit (ASTfloating_point node, Object data) {
+      return DataType.Float;
    }
 
    public Object visit (ASTstring node, Object data) {
@@ -375,7 +396,6 @@ public class SemanticVisitor implements HOPE7Visitor {
             System.out.println("Fail: " + value + " Not Declared Before Use!");
          }
       }
-      variablesWritten.remove(value + scope);
       return DataType.Id;
    }
 

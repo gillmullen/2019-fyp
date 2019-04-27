@@ -123,6 +123,9 @@ public class SymbolTable {
       if(type.equals("integer") || type.equals("int")) {
          mty = "i32";
       }
+      else if(type.equals("float")) {
+         mty = type;
+      }
       else if(type.equals("boolean") || type.equals("bool")) {
          mty = "i1";
       }

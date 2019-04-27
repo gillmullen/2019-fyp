@@ -94,6 +94,10 @@ public class StringVisitor implements HOPE7Visitor {
       return node.value;
    }
 
+   public Object visit(ASTfloating_point node, Object data) {
+      return node.value;
+   }
+
    public Object visit(ASTstring node, Object data) {
       return node.value;
    }
