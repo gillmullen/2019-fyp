@@ -151,6 +151,9 @@ public class SemanticVisitor implements HOPE7Visitor {
             }
             type2 = st.getType(scope, id2);
          }
+         if(type2.equals("bool")) {
+            type2 = "boolean";
+         }
       }
       else {
          SimpleNode func = (SimpleNode) child2.jjtGetChild(0);

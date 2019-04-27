@@ -4,9 +4,9 @@ declare i32 @puts(i8*)
 
 define i32 @main ()
 {
-%.p.arr = alloca <3 x i32>
-store <3 x i32> <i32 1, i32 2, i32 3>, <3 x i32>* %.p.arr
-%.t1 = getelementptr i32, <3 x i32>* %arr, i32 1
-call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i32 0, i32 0), i32 %.t1)
+%.p.t = alloca i1
+store i1 true, i1* %.p.t
+%.t1 = load i1, i1* %.p.t
+call i32 (i8*, ...) @printf (i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.1arg_str, i1 0, i1 0), i1 %.t1)
 ret i32 0
 }

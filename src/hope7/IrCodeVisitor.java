@@ -321,7 +321,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
       if(type.equals("int")) {
          mty = "i32";
       }
-      else if(type.equals("bool")) {
+      else if(type.equals("bool") || type.equals("boolean")) {
          mty = "i1";
       }
       else {
