@@ -3,6 +3,7 @@ public enum DataType {
    Program,
    Main,
    Func,
+   Void,
    Integer,
    Float,
    String,

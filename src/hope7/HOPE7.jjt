@@ -113,6 +113,7 @@ TOKEN [IGNORE_CASE] : /* Keywords */
     <STRING : "string"> |
     <BOOL : "boolean"> |
     <FLOAT : "float"> |
+    <VOID : "void"> |
     <TRUE : "true"> |
     <FALSE : "false"> |
     <IF : "if"> |
@@ -186,16 +187,21 @@ void function_declarations() : {}
 
 void function() : { String id; String retType; }
 {
-   <DEF> retType = type() id = lhs_identifier() { if(retType.equals("int")) { retType = "integer"; } st.insertFunc(scope, id, retType, "FUNC"); scope = id; }
+   <DEF> retType = return_type() id = lhs_identifier() { if(retType.equals("int")) { retType = "integer"; } st.insertFunc(scope, id, retType, "FUNC"); scope = id; }
    <LBR> parameter_list() <RBR> <LCB>
    statement_block()
-   <RETURN> <LBR> expression() <RBR> <SEMIC>
+   <RETURN> ( expression() | {} ) <SEMIC>
    <RCB>
+}
+
+String return_type() : { Token t; }
+{
+   ( t = <INT> | t = <FLOAT> | t = <STRING> | t = <BOOL> | t = <VOID> ) { jjtThis.value = t.image; return t.image; }
 }
 
 void parameter_list() : {}
 {
-   parameter() ( <COMMA> parameter() )*
+   parameter() ( <COMMA> parameter() )* | {}
 }
 
 void parameter() : { String id; String type; }
@@ -210,7 +216,7 @@ void statement_block() : {}
 
 void statement() : {}
 {
-   LOOKAHEAD(3) function_call() |
+   LOOKAHEAD(2) function_call() <SEMIC> |
    LOOKAHEAD(2) array_declaration() |
    print() |
    assignment() |
@@ -261,7 +267,7 @@ void function_call() : { String id; }
 
 void argument_list() : {}
 {
-   argument() ( <COMMA> argument() )*
+   argument() ( <COMMA> argument() )* | {}
 }
 
 void argument() : {}

@@ -115,6 +115,23 @@ public class SemanticVisitor implements HOPE7Visitor {
       return DataType.Func;
    }
 
+   public Object visit (ASTreturn_type node, Object data) {
+      String type = (String) node.value;
+      if(type.equals("int")) {
+         return DataType.Integer;
+      }
+      else if(type.equals("boolean")) {
+         return DataType.Boolean;
+      }
+      else if(type.equals("string")) {
+         return DataType.String;
+      }
+      else if(type.equals("void")) {
+         return DataType.Void;
+      }
+      return DataType.TypeUnknown;
+   }
+
    public Object visit (ASTparameter_list node, Object data) {
       return node.childrenAccept(this, data);
    }

@@ -117,6 +117,7 @@ TOKEN [IGNORE_CASE] : /* Keywords */
     <STRING : "string"> |
     <BOOL : "boolean"> |
     <FLOAT : "float"> |
+    <VOID : "void"> |
     <TRUE : "true"> |
     <FALSE : "false"> |
     <IF : "if"> |
@@ -284,10 +285,10 @@ void function() : {/*@bgen(jjtree) function */
 {/*@bgen(jjtree) function */
    try {
 /*@egen*/
-   <DEF> retType = type() id = lhs_identifier() { if(retType.equals("int")) { retType = "integer"; } st.insertFunc(scope, id, retType, "FUNC"); scope = id; }
+   <DEF> retType = return_type() id = lhs_identifier() { if(retType.equals("int")) { retType = "integer"; } st.insertFunc(scope, id, retType, "FUNC"); scope = id; }
    <LBR> parameter_list() <RBR> <LCB>
    statement_block()
-   <RETURN> <LBR> expression() <RBR> <SEMIC>
+   <RETURN> ( expression() | {} ) <SEMIC>
    <RCB>/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
@@ -311,6 +312,28 @@ void function() : {/*@bgen(jjtree) function */
 /*@egen*/
 }
 
+String return_type() : {/*@bgen(jjtree) return_type */
+                         ASTreturn_type jjtn000 = new ASTreturn_type(JJTRETURN_TYPE);
+                         boolean jjtc000 = true;
+                         jjtree.openNodeScope(jjtn000);
+/*@egen*/ Token t; }
+{/*@bgen(jjtree) return_type */
+   try {
+/*@egen*/
+   ( t = <INT> | t = <FLOAT> | t = <STRING> | t = <BOOL> | t = <VOID> )/*@bgen(jjtree)*/
+                                                                        {
+                                                                          jjtree.closeNodeScope(jjtn000, true);
+                                                                          jjtc000 = false;
+                                                                        }
+/*@egen*/ { jjtn000.value = t.image; return t.image; }/*@bgen(jjtree)*/
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+   }
+/*@egen*/
+}
+
 void parameter_list() : {/*@bgen(jjtree) parameter_list */
   ASTparameter_list jjtn000 = new ASTparameter_list(JJTPARAMETER_LIST);
   boolean jjtc000 = true;
@@ -319,7 +342,12 @@ void parameter_list() : {/*@bgen(jjtree) parameter_list */
 {/*@bgen(jjtree) parameter_list */
    try {
 /*@egen*/
-   parameter() ( <COMMA> parameter() )*/*@bgen(jjtree)*/
+   parameter() ( <COMMA> parameter() )* |/*@bgen(jjtree)*/
+                                          {
+                                            jjtree.closeNodeScope(jjtn000, true);
+                                            jjtc000 = false;
+                                          }
+/*@egen*/ {}/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -422,7 +450,7 @@ void statement() : {/*@bgen(jjtree) statement */
 {/*@bgen(jjtree) statement */
    try {
 /*@egen*/
-   LOOKAHEAD(3) function_call() |
+   LOOKAHEAD(2) function_call() <SEMIC> |
    LOOKAHEAD(2) array_declaration() |
    print() |
    assignment() |
@@ -708,7 +736,12 @@ void argument_list() : {/*@bgen(jjtree) argument_list */
 {/*@bgen(jjtree) argument_list */
    try {
 /*@egen*/
-   argument() ( <COMMA> argument() )*/*@bgen(jjtree)*/
+   argument() ( <COMMA> argument() )* |/*@bgen(jjtree)*/
+                                        {
+                                          jjtree.closeNodeScope(jjtn000, true);
+                                          jjtc000 = false;
+                                        }
+/*@egen*/ {}/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);

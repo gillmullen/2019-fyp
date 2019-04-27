@@ -120,7 +120,10 @@ public class SymbolTable {
    public String getSymbol(String scope, String id) {
       String type = types.get(id + scope);
       String mty;
-      if(type.equals("integer") || type.equals("int")) {
+      if(type.equals("void")) {
+         mty = type;
+      }
+      else if(type.equals("integer") || type.equals("int")) {
          mty = "i32";
       }
       else if(type.equals("float")) {

@@ -42,8 +42,16 @@ public class PrintVisitor implements HOPE7Visitor {
       return data;
    }
 
+   public Object visit(ASTreturn_type node, Object data) {
+      System.out.print(node.value);
+      return data;
+   }
+
    public Object visit(ASTparameter_list node, Object data) {
-      if (node.jjtGetNumChildren() == 1) {
+      if(node.jjtGetNumChildren() == 0) {
+         return data;
+      }
+      else if(node.jjtGetNumChildren() == 1) {
          node.jjtGetChild(0).jjtAccept(this, data); // parameter
       }
       else {
@@ -142,7 +150,10 @@ public class PrintVisitor implements HOPE7Visitor {
    }
 
    public Object visit(ASTargument_list node, Object data) {
-      if (node.jjtGetNumChildren() == 1) {
+      if(node.jjtGetNumChildren() == 0) {
+         return data;
+      }
+      else if(node.jjtGetNumChildren() == 1) {
          node.jjtGetChild(0).jjtAccept(this, data); // argument
       }
       else {

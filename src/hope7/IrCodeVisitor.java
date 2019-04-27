@@ -183,9 +183,11 @@ public class IrCodeVisitor implements HOPE7Visitor {
          buffer.write(command);
          buffer.newLine();
 
-         command = "%.p.return = alloca " + mty;
-         buffer.write(command);
-         buffer.newLine();
+         if(!type.equals("void")) {
+            command = "%.p.return = alloca " + mty;
+            buffer.write(command);
+            buffer.newLine();
+         }
 
          if(!paramsString.equals("")) {
             for(int i = 0; i < params.length; i++) {
@@ -199,10 +201,12 @@ public class IrCodeVisitor implements HOPE7Visitor {
          }
          node.jjtGetChild(3).jjtAccept(this, data); // statement_block (function body)
 
-         String expr = (String) node.jjtGetChild(4).jjtAccept(this, data);
-         command = "store " + mty + " " + expr + ", " + mty + "* %.p.return";
-         buffer.write(command);
-         buffer.newLine();
+         if(!type.equals("void")) {
+            String expr = (String) node.jjtGetChild(4).jjtAccept(this, data);
+            command = "store " + mty + " " + expr + ", " + mty + "* %.p.return";
+            buffer.write(command);
+            buffer.newLine();
+         }
 
          String t = getTmp();
          command = t + " = add i1 0,0";
@@ -214,14 +218,21 @@ public class IrCodeVisitor implements HOPE7Visitor {
 
          buffer.write("exit:");
          buffer.newLine();
-         String tmp = getTmp();
-         command = tmp + " = load " + mty + ", " + mty + "* %.p.return";
-         registerTypes.put(tmp, mty);
+
+         if(type.equals("void")) {
+            command = "ret void";
+         }
+         else {
+            String tmp = getTmp();
+            command = tmp + " = load " + mty + ", " + mty + "* %.p.return";
+            registerTypes.put(tmp, mty);
+            buffer.write(command);
+            buffer.newLine();
+            command = "ret " + mty + " " + tmp;
+         }
          buffer.write(command);
          buffer.newLine();
-         command = "ret " + mty + " " + tmp;
-         buffer.write(command);
-         buffer.newLine();
+
          buffer.write("}");
          buffer.newLine();
          buffer.newLine();
@@ -232,6 +243,10 @@ public class IrCodeVisitor implements HOPE7Visitor {
       }
 
       return data;
+   }
+
+   public Object visit(ASTreturn_type node, Object data) {
+      return node.value;
    }
 
    public Object visit(ASTparameter_list node, Object data) {
@@ -517,15 +532,22 @@ public class IrCodeVisitor implements HOPE7Visitor {
       Context context = (Context) data;
       BufferedWriter buffer = context.buffer;
 
-      String tmp = getTmp();
       String id = (String) node.jjtGetChild(0).jjtAccept(this, data);
       String args = (String) node.jjtGetChild(1).jjtAccept(this, data);
       String funcType = symbolTable.getSymbol("global", id);
       String prevScope = scope;
       scope = id;
 
-      String command = tmp + " = call " + funcType + " @" + id + " (" + args + ")";
-      registerTypes.put(tmp, funcType);
+      String command, tmp;
+      if(funcType.equals("void")) {
+         command = "call " + funcType + " @" + id + " (" + args + ")";
+         tmp = "";
+      }
+      else {
+         tmp = getTmp();
+         command = tmp + " = call " + funcType + " @" + id + " (" + args + ")";
+         registerTypes.put(tmp, funcType);
+      }
 
       try {
          buffer.write(command);
@@ -537,6 +559,7 @@ public class IrCodeVisitor implements HOPE7Visitor {
       }
 
       scope = prevScope;
+
       return tmp;
    }
 

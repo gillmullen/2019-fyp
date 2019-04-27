@@ -1,3 +1,7 @@
-float f;
-f = 1.25;
-print(f);
+def int square(int n) {
+	return n * n;
+}
+
+main {
+	print(square(2));
+}

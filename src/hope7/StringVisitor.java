@@ -53,6 +53,10 @@ public class StringVisitor implements HOPE7Visitor {
       return data;
    }
 
+   public Object visit(ASTreturn_type node, Object data) {
+      return node.value;
+   }
+
    public Object visit(ASTstatement_block node, Object data) {
       if(node.jjtGetNumChildren() != 0) {
          node.childrenAccept(this, data);

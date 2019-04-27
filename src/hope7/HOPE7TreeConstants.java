@@ -5,35 +5,36 @@ public interface HOPE7TreeConstants
   public int JJTMAIN = 1;
   public int JJTFUNCTION_DECLARATIONS = 2;
   public int JJTFUNCTION = 3;
-  public int JJTPARAMETER_LIST = 4;
-  public int JJTPARAMETER = 5;
-  public int JJTSTATEMENT_BLOCK = 6;
-  public int JJTSTATEMENT = 7;
-  public int JJTASSIGNMENT = 8;
-  public int JJTDECLARATION = 9;
-  public int JJTARRAY_DECLARATION = 10;
-  public int JJTARRAY_SIZE = 11;
-  public int JJTPRINT = 12;
-  public int JJTIF_STATEMENT = 13;
-  public int JJTWHILE_LOOP = 14;
-  public int JJTFUNCTION_CALL = 15;
-  public int JJTARGUMENT_LIST = 16;
-  public int JJTARGUMENT = 17;
-  public int JJTEXPRESSION = 18;
-  public int JJTCONDITION = 19;
-  public int JJTFRAGMENT = 20;
-  public int JJTINTEGER = 21;
-  public int JJTFLOATING_POINT = 22;
-  public int JJTSTRING = 23;
-  public int JJTBOOL = 24;
-  public int JJTARRAY = 25;
-  public int JJTARRAY_INDEX = 26;
-  public int JJTLHS_IDENTIFIER = 27;
-  public int JJTRHS_IDENTIFIER = 28;
-  public int JJTTYPE = 29;
-  public int JJTARITH_OP = 30;
-  public int JJTLOGIC_OP = 31;
-  public int JJTCOMP_OP = 32;
+  public int JJTRETURN_TYPE = 4;
+  public int JJTPARAMETER_LIST = 5;
+  public int JJTPARAMETER = 6;
+  public int JJTSTATEMENT_BLOCK = 7;
+  public int JJTSTATEMENT = 8;
+  public int JJTASSIGNMENT = 9;
+  public int JJTDECLARATION = 10;
+  public int JJTARRAY_DECLARATION = 11;
+  public int JJTARRAY_SIZE = 12;
+  public int JJTPRINT = 13;
+  public int JJTIF_STATEMENT = 14;
+  public int JJTWHILE_LOOP = 15;
+  public int JJTFUNCTION_CALL = 16;
+  public int JJTARGUMENT_LIST = 17;
+  public int JJTARGUMENT = 18;
+  public int JJTEXPRESSION = 19;
+  public int JJTCONDITION = 20;
+  public int JJTFRAGMENT = 21;
+  public int JJTINTEGER = 22;
+  public int JJTFLOATING_POINT = 23;
+  public int JJTSTRING = 24;
+  public int JJTBOOL = 25;
+  public int JJTARRAY = 26;
+  public int JJTARRAY_INDEX = 27;
+  public int JJTLHS_IDENTIFIER = 28;
+  public int JJTRHS_IDENTIFIER = 29;
+  public int JJTTYPE = 30;
+  public int JJTARITH_OP = 31;
+  public int JJTLOGIC_OP = 32;
+  public int JJTCOMP_OP = 33;
 
 
   public String[] jjtNodeName = {
@@ -41,6 +42,7 @@ public interface HOPE7TreeConstants
     "main",
     "function_declarations",
     "function",
+    "return_type",
     "parameter_list",
     "parameter",
     "statement_block",
@@ -72,4 +74,4 @@ public interface HOPE7TreeConstants
     "comp_op",
   };
 }
-/* JavaCC - OriginalChecksum=818e82e7040e4c93584bf8be3ae0c48a (do not edit this line) */
+/* JavaCC - OriginalChecksum=83c691d4203c3fb08b9a4f698dd8234d (do not edit this line) */
