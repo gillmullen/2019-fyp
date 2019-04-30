@@ -242,4 +242,8 @@ public class StringVisitor implements HOPE7Visitor {
    public Object visit(ASTcomp_op node, Object data) {
       return node.value;
    }
+
+   public Object visit(ASTskip node, Object data) {
+      return data;
+   }
 }

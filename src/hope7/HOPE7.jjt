@@ -121,7 +121,8 @@ TOKEN [IGNORE_CASE] : /* Keywords */
     <WHILE: "while"> |
     <DEF : "def"> |
     <MAIN : "main"> |
-    <RETURN : "return">
+    <RETURN : "return"> |
+    <NOP : "skip">
 }
 
 TOKEN : /* Punctuation */
@@ -222,7 +223,8 @@ void statement() : {}
    assignment() |
    declaration() |
    if_statement() |
-   while_loop()
+   while_loop() |
+   skip()
 }
 
 void assignment() : {}
@@ -252,7 +254,7 @@ void print() : {}
 
 void if_statement() : {}
 {
-   <IF> <LBR> condition() <RBR> <LCB> statement_block() <RCB> <ELSE> <LCB> statement_block() <RCB>
+   <IF> <LBR> condition() <RBR> <LCB> statement_block() <RCB> ( <ELSE> <LCB> statement_block() <RCB> | {} )
 }
 
 void while_loop() : {}
@@ -348,4 +350,9 @@ void logic_op() : { Token t; }
 void comp_op() : { Token t; }
 {
    ( t = <EQ> | t = <NEQ> | t = <GT> | t = <LT> | t = <GE> | t = <LE> ) { jjtThis.value = t.image; }
+}
+
+void skip() : {}
+{
+   <NOP> <SEMIC>
 }

@@ -35,6 +35,7 @@ public interface HOPE7TreeConstants
   public int JJTARITH_OP = 31;
   public int JJTLOGIC_OP = 32;
   public int JJTCOMP_OP = 33;
+  public int JJTSKIP = 34;
 
 
   public String[] jjtNodeName = {
@@ -72,6 +73,7 @@ public interface HOPE7TreeConstants
     "arith_op",
     "logic_op",
     "comp_op",
+    "skip",
   };
 }
-/* JavaCC - OriginalChecksum=83c691d4203c3fb08b9a4f698dd8234d (do not edit this line) */
+/* JavaCC - OriginalChecksum=8d17a56826a26ff1f40417f8c6b2a761 (do not edit this line) */

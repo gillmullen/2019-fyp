@@ -478,7 +478,17 @@ public class IrCodeVisitor implements HOPE7Visitor {
 
          buffer.write(falseBlock + ":");
          buffer.newLine();
-         node.jjtGetChild(2).jjtAccept(this, data);
+         if(node.jjtGetNumChildren() != 2) {
+            node.jjtGetChild(2).jjtAccept(this, data);
+         }
+         else {
+            String tmp = getTmp();
+            command = tmp + " = add i1 0, 0";
+            registerTypes.put(tmp, "i1");
+            buffer.write(command);
+            buffer.newLine();
+         }
+
          buffer.write("br label %" + endBlock);
          buffer.newLine();
 
@@ -867,5 +877,25 @@ public class IrCodeVisitor implements HOPE7Visitor {
 
    public Object visit(ASTcomp_op node, Object data) {
       return node.value;
+   }
+
+   public Object visit(ASTskip node, Object data) {
+      Context context = (Context) data;
+      BufferedWriter buffer = context.buffer;
+
+      String tmp = getTmp();
+      String command = tmp + " = add i1 0, 0";
+      registerTypes.put(tmp, "i1");
+
+      try {
+         buffer.write(command);
+         buffer.newLine();
+      }
+      catch(IOException e) {
+         System.out.println("Failed to write IR code for skip command to file");
+         e.printStackTrace(System.out);
+      }
+
+      return tmp;
    }
 }

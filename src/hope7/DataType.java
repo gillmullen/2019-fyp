@@ -12,5 +12,6 @@ public enum DataType {
    ArithOp,
    LogicOp,
    CompOp,
+   Skip,
    TypeUnknown
 }

@@ -128,10 +128,16 @@ public class PrintVisitor implements HOPE7Visitor {
       node.jjtGetChild(0).jjtAccept(this, data); // condition
       System.out.println(" ) {");
       node.jjtGetChild(1).jjtAccept(this, data); // statement_block
-      System.out.println("\n}\nelse { ");
-      node.jjtGetChild(2).jjtAccept(this, data); // statement_block
       System.out.println("}");
-      return data;
+      if(node.jjtGetNumChildren() == 2) {
+         return data;
+      }
+      else {
+         System.out.println("else { ");
+         node.jjtGetChild(2).jjtAccept(this, data); // statement_block
+         System.out.println("}");
+         return data;
+      }
    }
 
    public Object visit(ASTwhile_loop node, Object data) {
@@ -278,6 +284,11 @@ public class PrintVisitor implements HOPE7Visitor {
 
    public Object visit(ASTcomp_op node, Object data) {
       System.out.print(node.value);
+      return data;
+   }
+
+   public Object visit(ASTskip node, Object data) {
+      System.out.println("skip ;");
       return data;
    }
 

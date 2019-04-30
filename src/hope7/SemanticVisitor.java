@@ -448,4 +448,8 @@ public class SemanticVisitor implements HOPE7Visitor {
       return DataType.CompOp;
    }
 
+   public Object visit (ASTskip node, Object data) {
+      return DataType.Skip;
+   }
+
 }

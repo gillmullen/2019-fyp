@@ -125,7 +125,8 @@ TOKEN [IGNORE_CASE] : /* Keywords */
     <WHILE: "while"> |
     <DEF : "def"> |
     <MAIN : "main"> |
-    <RETURN : "return">
+    <RETURN : "return"> |
+    <NOP : "skip">
 }
 
 TOKEN : /* Punctuation */
@@ -456,7 +457,8 @@ void statement() : {/*@bgen(jjtree) statement */
    assignment() |
    declaration() |
    if_statement() |
-   while_loop()/*@bgen(jjtree)*/
+   while_loop() |
+   skip()/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -643,7 +645,12 @@ void if_statement() : {/*@bgen(jjtree) if_statement */
 {/*@bgen(jjtree) if_statement */
    try {
 /*@egen*/
-   <IF> <LBR> condition() <RBR> <LCB> statement_block() <RCB> <ELSE> <LCB> statement_block() <RCB>/*@bgen(jjtree)*/
+   <IF> <LBR> condition() <RBR> <LCB> statement_block() <RCB> ( <ELSE> <LCB> statement_block() <RCB> |/*@bgen(jjtree)*/
+                                                                                                       {
+                                                                                                         jjtree.closeNodeScope(jjtn000, true);
+                                                                                                         jjtc000 = false;
+                                                                                                       }
+/*@egen*/ {} )/*@bgen(jjtree)*/
    } catch (Throwable jjte000) {
      if (jjtc000) {
        jjtree.clearNodeScope(jjtn000);
@@ -1162,6 +1169,23 @@ void comp_op() : {/*@bgen(jjtree) comp_op */
                                                                           jjtc000 = false;
                                                                         }
 /*@egen*/ { jjtn000.value = t.image; }/*@bgen(jjtree)*/
+   } finally {
+     if (jjtc000) {
+       jjtree.closeNodeScope(jjtn000, true);
+     }
+   }
+/*@egen*/
+}
+
+void skip() : {/*@bgen(jjtree) skip */
+  ASTskip jjtn000 = new ASTskip(JJTSKIP);
+  boolean jjtc000 = true;
+  jjtree.openNodeScope(jjtn000);
+/*@egen*/}
+{/*@bgen(jjtree) skip */
+   try {
+/*@egen*/
+   <NOP> <SEMIC>/*@bgen(jjtree)*/
    } finally {
      if (jjtc000) {
        jjtree.closeNodeScope(jjtn000, true);
