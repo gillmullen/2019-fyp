@@ -1,0 +1,5 @@
+int goals;
+int points;
+goals = 2;
+points = 10;
+print(goals * 3 + points); // result = 16

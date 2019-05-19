@@ -1,0 +1,7 @@
+int grade = 60;
+if(grade > 40) {
+   print("pass");
+}
+else {
+   print("fail");
+}
